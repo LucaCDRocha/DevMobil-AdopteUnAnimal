@@ -9,20 +9,15 @@
 	});
 
 	const isVisible = ref(true);
+	const emit = defineEmits(['swipe']);
 
 	const onSwipe = (direction) => {
 		const target = document.querySelector(`.swipeable-card-${props.index}`);
-		if (direction === "left") {
-			target.style.transition = 'transform 0.5s ease';
-			target.style.transform = 'translate(-100vw, 0)';
-			console.log("Disliked:", props.card.name);
-		} else if (direction === "right") {
-			target.style.transition = 'transform 0.5s ease';
-			target.style.transform = 'translate(100vw, 0)';
-			console.log("Liked:", props.card.name);
-		}
+		target.style.transition = 'transform 0.5s ease';
+		target.style.transform = direction === "left" ? 'translate(-100vw, 0)' : 'translate(100vw, 0)';
 		setTimeout(() => {
 			isVisible.value = false;
+			emit('swipe', direction);
 		}, 500);
 	};
 
