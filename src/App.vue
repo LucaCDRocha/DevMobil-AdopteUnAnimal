@@ -1,16 +1,14 @@
 <script setup>
 	import { RouterLink, RouterView } from "vue-router";
+	import TheNav from "./components/TheNav.vue";
 </script>
 
 <template>
-	<nav>
-		<RouterLink class="btn" to="/">Home</RouterLink>
-		<RouterLink class="btn" to="/about">About</RouterLink>
-	</nav>
-
-	<main>
+	<main class="h-full w-full">
 		<RouterView />
 	</main>
+
+	<TheNav />
 </template>
 
 <style scoped></style>

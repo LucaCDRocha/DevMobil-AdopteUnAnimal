@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-	<button class="btn btn-primary">Home</button>
+	<button class="btn btn-primary">Chat</button>
 </template>
 
 <style></style>
