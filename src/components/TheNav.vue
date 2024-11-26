@@ -4,7 +4,7 @@
 
 <template>
 	<nav>
-		<ul class="menu menu-horizontal mt-6 w-full bg-primary-content">
+		<ul class="menu menu-horizontal mt-6 w-full bg-primary-content flex justify-around gap-2">
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Accueil" to="/"
 					><span class="material-symbols-outlined align-middle">pets</span></RouterLink
@@ -30,8 +30,16 @@
 </template>
 
 <style scoped>
-.menu{
-    display: flex;
-    justify-content: space-around;
-}
+	li {
+		flex-grow: 1;
+	}
+	span {
+		font-size: 1.8rem;
+	}
+	:deep(a) {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 </style>
