@@ -4,7 +4,7 @@
 </script>
 
 <template>
-	<main class="h-full w-full">
+	<main class="flex justify-center items-center h-full w-full">
 		<RouterView />
 	</main>
 

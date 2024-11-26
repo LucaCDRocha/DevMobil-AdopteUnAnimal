@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-	<button class="btn btn-primary">Home</button>
+	<h1 class="text-5xl">Home</h1>
 </template>
 
 <style></style>

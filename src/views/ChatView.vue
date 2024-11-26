@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-	<button class="btn btn-primary">Chat</button>
+    <h1 class="text-5xl">Chat</h1>
 </template>
 
 <style></style>

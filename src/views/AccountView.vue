@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-	<button class="btn btn-primary">Account</button>
+    <h1 class="text-5xl">Account</h1>
 </template>
 
 <style></style>

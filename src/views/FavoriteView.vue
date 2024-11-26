@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-	<button class="btn btn-primary">Favorites</button>
+	<h1 class="text-5xl">Favorites</h1>
 </template>
 
 <style></style>
