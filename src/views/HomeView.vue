@@ -8,7 +8,7 @@
 			name: "Card 1",
 			description: "Description 1",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "1",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -18,7 +18,7 @@
 			name: "Card 2",
 			description: "Description 2",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "2",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -28,7 +28,7 @@
 			name: "Card 3",
 			description: "Description 3",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "3",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -38,7 +38,7 @@
 			name: "Card 4",
 			description: "Description 4",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "4",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -48,7 +48,7 @@
 			name: "Card 5",
 			description: "Description 5",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "5",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -58,7 +58,7 @@
 			name: "Card 6",
 			description: "Description 6",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "6",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -68,7 +68,7 @@
 			name: "Card 7",
 			description: "Description 7",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "7",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -78,7 +78,7 @@
 			name: "Card 8",
 			description: "Description 8",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "8",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -88,7 +88,7 @@
 			name: "Card 9",
 			description: "Description 9",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "9",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -98,7 +98,7 @@
 			name: "Card 10",
 			description: "Description 10",
 			tags: ["tag_id"],
-			img: "https://picsum.photos/200/300",
+			img: "https://placecats.com/200/300",
 			spa_id: "10",
 			likes_count: 0,
 			dislikes_count: 0,
@@ -128,10 +128,10 @@
 
 <template>
 	<div class="flex flex-col gap-8 justify-end items-center w-full h-full overflow-hidden">
-		<div class="stack relative w-80 h-96">
+		<div class="stack relative w-80 h-full pt-8">
 			<SwipeableCard v-for="(card, index) in cards" :key="card._id" :card="card" :index="index" @swipe="swipe" />
 		</div>
-		<div class="flex justify-around m-4 w-full">
+		<div class="flex justify-between mt-1 w-72 z-50">
 			<button @click="swipe('left')" class="btn btn-lg btn-error btn-circle">
 				<span class="material-symbols-outlined fill align-middle text-3xl">close</span>
 			</button>
