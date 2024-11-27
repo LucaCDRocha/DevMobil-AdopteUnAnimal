@@ -5,7 +5,7 @@
 </script>
 
 <template>
-	<div class="card w-full h-full bg-white shadow-xl rounded-lg overflow-hidden">
+	<div class="card w-full h-full bg-base-100 shadow-xl rounded-lg overflow-hidden">
 		<img :src="card.img" alt="Card image" class="w-full h-2/3 object-cover" />
 		<div class="p-4">
 			<h3 class="text-lg font-bold">{{ card.name }}</h3>

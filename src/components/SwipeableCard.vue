@@ -1,5 +1,5 @@
 <script setup>
-	import { ref, onMounted } from "vue";
+	import { ref, onMounted, defineProps, defineEmits } from "vue";
 	import interact from "interactjs";
 	import Card from "@/components/Card.vue";
 
@@ -13,8 +13,10 @@
 	const likeIndicator = ref(false);
 	const dislikeIndicator = ref(false);
 
+	const cardRef = ref(null);
+
 	const onSwipe = (direction) => {
-		const target = document.querySelector(`.swipeable-card-${props.index}`);
+		const target = cardRef.value;
 		target.style.transition = "transform 0.5s ease";
 		target.style.transform = direction === "left" ? "translate(-100vw, 0)" : "translate(100vw, 0)";
 		setTimeout(() => {
@@ -24,7 +26,7 @@
 	};
 
 	onMounted(() => {
-		interact(`.swipeable-card-${props.index}`)
+		interact(cardRef.value)
 			.draggable({
 				modifiers: [
 					interact.modifiers.restrict({
@@ -34,6 +36,8 @@
 				],
 				listeners: {
 					move(event) {
+						const topCardIndex = 0;
+						if (props.index !== topCardIndex) return; // Ensure only the top card is swiped
 						const target = event.target;
 						const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
 						const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
@@ -47,6 +51,8 @@
 						dislikeIndicator.value = x < -100;
 					},
 					end(event) {
+						const topCardIndex = 0;
+						if (props.index !== topCardIndex) return; // Ensure only the top card is swiped
 						const x = parseFloat(event.target.getAttribute("data-x")) || 0;
 						if (x < -100) {
 							onSwipe("left");
@@ -71,16 +77,12 @@
 </script>
 
 <template>
-	<div v-if="isVisible" :class="`swipeable-card-${index} swipeable-card absolute w-full h-full`">
-		<div
-			class="absolute inset-0 flex justify-center items-center z-10 bg-base-content opacity-80 h-full w-full rounded-lg"
-			v-if="dislikeIndicator">
-			<span class="material-symbols-outlined text-error text-9xl">close</span>
+	<div v-if="isVisible" ref="cardRef" :class="`swipeable-card-${index} swipeable-card absolute w-full h-full`">
+		<div class="indicator absolute inset-0 flex justify-center items-center z-10" v-if="dislikeIndicator">
+			<span class="indicator-item badge badge-error text-9xl">close</span>
 		</div>
-		<div
-			class="absolute inset-0 flex justify-center items-center z-10 bg-base-content opacity-80 h-full w-full rounded-lg"
-			v-if="likeIndicator">
-			<span class="material-symbols-outlined text-success text-9xl">favorite</span>
+		<div class="indicator absolute inset-0 flex justify-center items-center z-10" v-if="likeIndicator">
+			<span class="indicator-item badge badge-success text-9xl">favorite</span>
 		</div>
 		<Card :card="card" />
 	</div>

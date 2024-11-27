@@ -43,14 +43,74 @@
 			likes_count: 0,
 			dislikes_count: 0,
 		},
+		{
+			_id: "5",
+			name: "Card 5",
+			description: "Description 5",
+			tags: ["tag_id"],
+			img: "https://picsum.photos/200/300",
+			spa_id: "5",
+			likes_count: 0,
+			dislikes_count: 0,
+		},
+		{
+			_id: "6",
+			name: "Card 6",
+			description: "Description 6",
+			tags: ["tag_id"],
+			img: "https://picsum.photos/200/300",
+			spa_id: "6",
+			likes_count: 0,
+			dislikes_count: 0,
+		},
+		{
+			_id: "7",
+			name: "Card 7",
+			description: "Description 7",
+			tags: ["tag_id"],
+			img: "https://picsum.photos/200/300",
+			spa_id: "7",
+			likes_count: 0,
+			dislikes_count: 0,
+		},
+		{
+			_id: "8",
+			name: "Card 8",
+			description: "Description 8",
+			tags: ["tag_id"],
+			img: "https://picsum.photos/200/300",
+			spa_id: "8",
+			likes_count: 0,
+			dislikes_count: 0,
+		},
+		{
+			_id: "9",
+			name: "Card 9",
+			description: "Description 9",
+			tags: ["tag_id"],
+			img: "https://picsum.photos/200/300",
+			spa_id: "9",
+			likes_count: 0,
+			dislikes_count: 0,
+		},
+		{
+			_id: "10",
+			name: "Card 10",
+			description: "Description 10",
+			tags: ["tag_id"],
+			img: "https://picsum.photos/200/300",
+			spa_id: "10",
+			likes_count: 0,
+			dislikes_count: 0,
+		},
 	]);
 
 	const swipe = (direction) => {
-		const currentCardIndex = cards.value.length - 1;
+		const currentCardIndex = 0;
 		const currentCard = document.querySelector(`.swipeable-card-${currentCardIndex}`);
 		if (currentCard) {
-			currentCard.style.transition = 'transform 0.5s ease';
-			currentCard.style.transform = direction === "left" ? 'translate(-100vw, 0)' : 'translate(100vw, 0)';
+			currentCard.style.transition = "transform 0.5s ease";
+			currentCard.style.transform = direction === "left" ? "translate(-100vw, 0)" : "translate(100vw, 0)";
 			setTimeout(() => {
 				cards.value.splice(currentCardIndex, 1);
 			}, 500);
@@ -60,7 +120,7 @@
 
 <template>
 	<div class="flex flex-col gap-8 justify-end items-center w-full h-full overflow-hidden">
-		<div class="relative w-80 h-96">
+		<div class="stack relative w-80 h-96">
 			<SwipeableCard v-for="(card, index) in cards" :key="card._id" :card="card" :index="index" @swipe="swipe" />
 		</div>
 		<div class="flex justify-around m-4 w-full">
@@ -74,4 +134,5 @@
 	</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
