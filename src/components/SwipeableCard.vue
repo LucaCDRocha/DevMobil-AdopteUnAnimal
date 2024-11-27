@@ -47,16 +47,16 @@
 						target.setAttribute("data-x", x);
 						target.setAttribute("data-y", y);
 
-						likeIndicator.value = x > 100;
-						dislikeIndicator.value = x < -100;
+						likeIndicator.value = x > 50;
+						dislikeIndicator.value = x < -50;
 					},
 					end(event) {
 						const topCardIndex = 0;
 						if (props.index !== topCardIndex) return; // Ensure only the top card is swiped
 						const x = parseFloat(event.target.getAttribute("data-x")) || 0;
-						if (x < -100) {
+						if (x < -50) {
 							onSwipe("left");
-						} else if (x > 100) {
+						} else if (x > 50) {
 							onSwipe("right");
 						} else {
 							event.target.style.transition = "transform 0.5s ease";

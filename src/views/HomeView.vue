@@ -108,11 +108,19 @@
 	const swipe = (direction) => {
 		const currentCardIndex = 0;
 		const currentCard = document.querySelector(`.swipeable-card-${currentCardIndex}`);
+		const nextCard = document.querySelector(`.swipeable-card-${currentCardIndex + 1}`);
 		if (currentCard) {
 			currentCard.style.transition = "transform 0.5s ease";
 			currentCard.style.transform = direction === "left" ? "translate(-100vw, 0)" : "translate(100vw, 0)";
+      if (nextCard) {
+        nextCard.style.transition = "transform 0.5s ease";
+        nextCard.style.transform = "translate(0, 0)";
+      }
 			setTimeout(() => {
-				cards.value.splice(currentCardIndex, 1);
+        if (nextCard) {
+          nextCard.style.transition = "";
+        }
+        cards.value.splice(currentCardIndex, 1);
 			}, 500);
 		}
 	};
