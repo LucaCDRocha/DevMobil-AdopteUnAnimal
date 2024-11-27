@@ -77,13 +77,13 @@
 </script>
 
 <template>
-	<div v-if="isVisible" ref="cardRef" :class="`swipeable-card-${index} swipeable-card absolute w-full h-full`">
-		<div class="indicator absolute inset-0 flex justify-center items-center z-10" v-if="dislikeIndicator">
-			<span class="indicator-item badge badge-error text-9xl">close</span>
-		</div>
-		<div class="indicator absolute inset-0 flex justify-center items-center z-10" v-if="likeIndicator">
-			<span class="indicator-item badge badge-success text-9xl">favorite</span>
-		</div>
+	<div v-if="isVisible" ref="cardRef" :class="`swipeable-card-${index} swipeable-card absolute w-full h-full opacity-0`">
+        <div class="absolute inset-0 flex justify-center items-center z-10 bg-error opacity-50 rounded-lg" v-if="dislikeIndicator">
+            <span class="material-symbols-outlined fill align-middle indicator text-error-content text-9xl">close</span>
+        </div>
+        <div class="absolute inset-0 flex justify-center items-center z-10 bg-success opacity-50 rounded-lg" v-if="likeIndicator">
+            <span class="material-symbols-outlined fill align-middle indicator text-success-content text-9xl">favorite</span>
+        </div>
 		<Card :card="card" />
 	</div>
 </template>
