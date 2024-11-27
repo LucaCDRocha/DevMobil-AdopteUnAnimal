@@ -1,6 +1,8 @@
 <script setup>
-	import { RouterLink, RouterView } from "vue-router";
+	import { RouterLink, RouterView, useRoute } from "vue-router";
 	import TheNav from "./components/TheNav.vue";
+
+	const route = useRoute();
 </script>
 
 <template>
@@ -8,7 +10,7 @@
 		<RouterView />
 	</main>
 
-	<TheNav />
+	<TheNav v-if="route.name !== 'login' && route.name !== 'register'" />
 </template>
 
 <style scoped></style>
