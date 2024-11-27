@@ -127,7 +127,7 @@
 </script>
 
 <template>
-	<div class="flex flex-col gap-8 justify-end items-center w-full h-full overflow-hidden">
+	<div class="flex flex-col gap-8 justify-end items-center w-full h-full overflow-hidden pb-4">
 		<div class="stack relative w-80 h-full pt-8">
 			<SwipeableCard v-for="(card, index) in cards" :key="card._id" :card="card" :index="index" @swipe="swipe" />
 		</div>

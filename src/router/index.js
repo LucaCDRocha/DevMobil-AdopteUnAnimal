@@ -5,6 +5,7 @@ import ChatView from "../views/ChatView.vue";
 import AccountView from "../views/auth/AccountView.vue";
 import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
+import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
 
 const isAuthenticated = async () => {
 	const response = await fetch("/api/users/isAuthenticated", {
@@ -58,6 +59,12 @@ const router = createRouter({
 			path: "/register",
 			name: "register",
 			component: RegisterView,
+		},
+		{
+			path: "/account/update",
+			name: "updateAccount",
+			component: UpdateAccountView,
+			meta: { requiresAuth: true },
 		},
 	],
 });

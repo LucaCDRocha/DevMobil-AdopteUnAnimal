@@ -17,6 +17,7 @@ const login = async () => {
   if (response.ok) {
     const data = await response.json();
     localStorage.setItem("token", data.token);
+    localStorage.setItem("user_id", data.user_id); // Store user ID in local storage
     router.push({ name: 'home' });
   } else {
     console.error("Error logging in");
@@ -30,7 +31,7 @@ const goToRegister = () => {
 
 <template>
   <div class="flex flex-col items-center justify-center h-full w-full bg-base-200">
-    <div class="card w-96 bg-base-100 shadow-xl">
+    <div class="card w-80 bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Connexion</h2>
         <form @submit.prevent="login">
