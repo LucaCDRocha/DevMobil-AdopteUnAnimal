@@ -72,7 +72,7 @@
 					},
 				},
 			})
-			.styleCursor(false);
+			.styleCursor(true);
 	});
 </script>
 
@@ -91,5 +91,6 @@
 <style scoped>
 	.swipeable-card {
 		touch-action: none;
+		user-select: none;
 	}
 </style>

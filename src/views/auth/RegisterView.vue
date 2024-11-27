@@ -9,11 +9,22 @@ const password = ref('');
 const router = useRouter();
 
 const register = () => {
-  // Replace with your actual registration logic
-  if (firstName.value && lastName.value && email.value && password.value) {
-    localStorage.setItem('user', JSON.stringify({ email: email.value }));
-    router.push({ name: 'home' });
-  }
+  const user = { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password.value };
+  fetch("/api/users/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  })
+    .then((response) => {
+      if (response.ok) {
+        router.push({ name: 'login' });
+      } else {
+        console.error("Error registering");
+      }
+    })
+    .catch((error) => {
+      console.error("Error registering", error);
+    });
 };
 
 const goToLogin = () => {
