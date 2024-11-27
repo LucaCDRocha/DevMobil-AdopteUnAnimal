@@ -22,7 +22,7 @@ const goToLogin = () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center h-full bg-base-200">
+  <div class="flex flex-col items-center justify-center h-full w-full bg-base-200">
     <div class="card w-96 bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Inscription</h2>

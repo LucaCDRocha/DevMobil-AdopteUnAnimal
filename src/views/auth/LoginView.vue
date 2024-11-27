@@ -6,11 +6,20 @@ const email = ref('');
 const password = ref('');
 const router = useRouter();
 
-const login = () => {
-  // Replace with your actual login logic
-  if (email.value && password.value) {
-    localStorage.setItem('user', JSON.stringify({ email: email.value }));
+const login = async () => {
+  const user = { email: email.value, password: password.value };
+  const response = await fetch("/api/users/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    localStorage.setItem("token", data.token);
     router.push({ name: 'home' });
+  } else {
+    console.error("Error logging in");
   }
 };
 
@@ -20,7 +29,7 @@ const goToRegister = () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center h-full bg-base-200">
+  <div class="flex flex-col items-center justify-center h-full w-full bg-base-200">
     <div class="card w-96 bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Connexion</h2>

@@ -6,9 +6,20 @@ import AccountView from "../views/auth/AccountView.vue";
 import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 
-const isAuthenticated = () => {
-	// Replace with your actual authentication check logic
-	return false
+const isAuthenticated = async () => {
+	const response = await fetch("/api/users/isAuthenticated", {
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${
+				localStorage.getItem("token")
+			}`,
+		},
+	});
+
+  if (!response.ok) {
+    return false;
+  }
+	return true;
 };
 
 const router = createRouter({
@@ -18,7 +29,7 @@ const router = createRouter({
 			path: "/",
 			name: "home",
 			component: HomeView,
-      meta: { requiresAuth: true },
+			meta: { requiresAuth: true },
 		},
 		{
 			path: "/favorite",
@@ -51,8 +62,8 @@ const router = createRouter({
 	],
 });
 
-router.beforeEach((to, from, next) => {
-	if (to.meta.requiresAuth && !isAuthenticated()) {
+router.beforeEach(async (to, from, next) => {
+	if (to.meta.requiresAuth && !(await isAuthenticated())) {
 		next({ name: "login" });
 	} else {
 		next();
