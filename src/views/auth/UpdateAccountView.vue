@@ -105,15 +105,18 @@
 					<button type="submit" class="btn btn-primary w-full">Modifier le compte</button>
 				</form>
 				<div class="form-control mt-2">
-					<button @click="goToAccount" class="btn btn-secondary w-full">Retour au compte</button>
+					<button @click="goToAccount" class="btn btn-outline btn-primary w-full">Retour au compte</button>
 				</div>
 			</div>
 		</div>
 
 		<!-- Success Modal -->
 		<dialog v-show="showModalSuccess" class="modal modal-open">
-			<div class="modal-box">
-				<h3 class="text-lg font-bold">Compte mis à jour</h3>
+			<div class="modal-box text-center">
+				<span class="material-symbols-outlined text-success text-6xl">check_circle</span>
+				<h3 class="text-lg font-bold mt-4">
+					Compte mis à jour
+				</h3>
 				<p class="py-4">Votre compte a été mis à jour avec succès.</p>
 				<div class="modal-action">
 					<button @click="closeModalSuccess" class="btn">OK</button>
@@ -123,8 +126,11 @@
 
 		<!-- Failure Modal -->
 		<dialog v-show="showModalFailure" class="modal modal-open">
-			<div class="modal-box">
-				<h3 class="text-lg font-bold">Échec de la mise à jour</h3>
+			<div class="modal-box text-center">
+				<span class="material-symbols-outlined text-error text-6xl">error</span>
+				<h3 class="text-lg font-bold mt-4">
+					Échec de la mise à jour
+				</h3>
 				<p class="py-4">La mise à jour de votre compte a échoué. Veuillez réessayer.</p>
 				<div class="modal-action">
 					<button @click="closeModalFailure" class="btn">OK</button>
@@ -135,5 +141,5 @@
 </template>
 
 <style scoped>
-/* Add your styles here */
+	/* Add your styles here */
 </style>

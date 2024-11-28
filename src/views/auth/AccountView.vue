@@ -5,6 +5,9 @@
 	const router = useRouter();
 	const userInfo = ref({});
 
+	const showModalError = ref(false);
+	const errorMessage = ref("");
+
 	const fetchUserInfo = async () => {
 		const token = localStorage.getItem("token");
 		const userId = localStorage.getItem("user_id");
@@ -19,7 +22,8 @@
 		if (response.ok) {
 			userInfo.value = await response.json();
 		} else {
-			alert("Failed to fetch user info");
+			errorMessage.value = "Failed to fetch user info";
+			showModalError.value = true;
 		}
 	};
 
@@ -35,6 +39,41 @@
 
 	const goToUpdateAccount = () => {
 		router.push({ name: "updateAccount" });
+	};
+
+	const showModalDelete = ref(false);
+
+	const deleteAccount = async () => {
+		const token = localStorage.getItem("token");
+		const userId = localStorage.getItem("user_id");
+
+		const response = await fetch(`/api/users/${userId}`, {
+			method: "DELETE",
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		if (response.ok) {
+			localStorage.removeItem("token");
+			localStorage.removeItem("user_id");
+			router.push({ name: "login" });
+		} else {
+			errorMessage.value = "Failed to delete account";
+			showModalError.value = true;
+		}
+	};
+
+	const openModalDelete = () => {
+		showModalDelete.value = true;
+	};
+
+	const closeModalDelete = () => {
+		showModalDelete.value = false;
+	};
+
+	const closeModalError = () => {
+		showModalError.value = false;
 	};
 </script>
 
@@ -52,11 +91,39 @@
 					<button @click="goToUpdateAccount" class="btn btn-primary w-full">Modifier le compte</button>
 				</div>
 				<div class="form-control mt-2">
-					<button @click="logout" class="btn btn-secondary w-full">Déconnexion</button>
+					<button @click="logout" class="btn btn-outline btn-primary w-full">Déconnexion</button>
+				</div>
+				<div class="form-control mt-2">
+					<button @click="openModalDelete" class="btn btn-link text-error w-full">Supprimer le compte</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<!-- Delete Confirmation Modal -->
+	<dialog v-show="showModalDelete" class="modal modal-open">
+		<div class="modal-box text-center">
+			<span class="material-symbols-outlined text-warning text-6xl">warning</span>
+			<h3 class="text-lg font-bold mt-4">Confirmer la suppression</h3>
+			<p class="py-4">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
+			<div class="modal-action">
+				<button @click="deleteAccount" class="btn btn-error">Supprimer</button>
+				<button @click="closeModalDelete" class="btn">Annuler</button>
+			</div>
+		</div>
+	</dialog>
+
+	<!-- Error Modal -->
+	<dialog v-show="showModalError" class="modal modal-open">
+		<div class="modal-box text-center">
+			<span class="material-symbols-outlined text-error text-6xl">error</span>
+			<h3 class="text-lg font-bold mt-4">Erreur</h3>
+			<p class="py-4">{{ errorMessage }}</p>
+			<div class="modal-action">
+				<button @click="closeModalError" class="btn">OK</button>
+			</div>
+		</div>
+	</dialog>
 </template>
 
 <style scoped>
