@@ -2,108 +2,129 @@
 	import { ref } from "vue";
 	import SwipeableCard from "@/components/SwipeableCard.vue";
 
-	const cards = ref([
-		{
-			_id: "1",
-			name: "Card 1",
-			description: "Description 1",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "1",
-			likes_count: 0,
-			dislikes_count: 0,
+	const cards = ref([]);
+
+	// {
+	// 	_id: "1",
+	// 	name: "Card 1",
+	// 	description: "Description 1",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "1",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "2",
+	// 	name: "Card 2",
+	// 	description: "Description 2",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "2",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "3",
+	// 	name: "Card 3",
+	// 	description: "Description 3",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "3",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "4",
+	// 	name: "Card 4",
+	// 	description: "Description 4",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "4",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "5",
+	// 	name: "Card 5",
+	// 	description: "Description 5",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "5",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "6",
+	// 	name: "Card 6",
+	// 	description: "Description 6",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "6",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "7",
+	// 	name: "Card 7",
+	// 	description: "Description 7",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "7",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "8",
+	// 	name: "Card 8",
+	// 	description: "Description 8",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "8",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "9",
+	// 	name: "Card 9",
+	// 	description: "Description 9",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "9",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+	// {
+	// 	_id: "10",
+	// 	name: "Card 10",
+	// 	description: "Description 10",
+	// 	tags: ["tag_id"],
+	// 	img: "https://placecats.com/200/300",
+	// 	spa_id: "10",
+	// 	likes_count: 0,
+	// 	dislikes_count: 0,
+	// },
+
+	// fetch pets in the database
+	fetch("/api/pets/", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
 		},
-		{
-			_id: "2",
-			name: "Card 2",
-			description: "Description 2",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "2",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "3",
-			name: "Card 3",
-			description: "Description 3",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "3",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "4",
-			name: "Card 4",
-			description: "Description 4",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "4",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "5",
-			name: "Card 5",
-			description: "Description 5",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "5",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "6",
-			name: "Card 6",
-			description: "Description 6",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "6",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "7",
-			name: "Card 7",
-			description: "Description 7",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "7",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "8",
-			name: "Card 8",
-			description: "Description 8",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "8",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "9",
-			name: "Card 9",
-			description: "Description 9",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "9",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-		{
-			_id: "10",
-			name: "Card 10",
-			description: "Description 10",
-			tags: ["tag_id"],
-			img: "https://placecats.com/200/300",
-			spa_id: "10",
-			likes_count: 0,
-			dislikes_count: 0,
-		},
-	]);
+	})
+		.then((response) => {
+			return response.json();
+		})
+		.then((data) => {
+			cards.value = data;
+		});
+
+	setTimeout(() => {
+		console.log("hello");
+		console.log(cards.value);
+	}, 5000);
+
+	console.log("nooo");
 
 	const swipe = (direction) => {
 		const currentCardIndex = 0;
@@ -112,15 +133,15 @@
 		if (currentCard) {
 			currentCard.style.transition = "transform 0.5s ease";
 			currentCard.style.transform = direction === "left" ? "translate(-100vw, 0)" : "translate(100vw, 0)";
-      if (nextCard) {
-        nextCard.style.transition = "transform 0.5s ease";
-        nextCard.style.transform = "translate(0, 0)";
-      }
+			if (nextCard) {
+				nextCard.style.transition = "transform 0.5s ease";
+				nextCard.style.transform = "translate(0, 0)";
+			}
 			setTimeout(() => {
-        if (nextCard) {
-          nextCard.style.transition = "";
-        }
-        cards.value.splice(currentCardIndex, 1);
+				if (nextCard) {
+					nextCard.style.transition = "";
+				}
+				cards.value.splice(currentCardIndex, 1);
 			}, 500);
 		}
 	};
@@ -142,5 +163,4 @@
 	</div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
