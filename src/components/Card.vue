@@ -5,6 +5,8 @@
 		card: Object,
 	});
 
+	console.log(props.card);
+
 	const imageSrc = computed(() => {
 		const byteArray = new Uint8Array(props.card.images[0].data.data);
 		const binaryString = byteArray.reduce((data, byte) => data + String.fromCharCode(byte), '');
@@ -19,8 +21,8 @@
 			alt="Card image"
 			class="w-full h-2/3 object-cover" />
 		<div class="p-4 flex flex-col">
-			<span v-for="tag in card.tags" class="badge self-end">{{ tag }}</span>
-			<h3 class="text-lg font-bold">{{ card.name }}</h3>
+			<span v-for="tag in card.tags" class="badge self-end">{{ tag.nom }}</span>
+			<h3 class="text-lg font-bold">{{ card.nom }}</h3>
 			<p class="text-gray-600">{{ card.description }}</p>
 		</div>
 	</div>
