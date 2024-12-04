@@ -1,39 +1,45 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 
 const email = ref('');
 const password = ref('');
 const router = useRouter();
 
-const login = async () => {
-  const user = { email: email.value, password: password.value };
-  const response = await fetch("/api/users/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
-  });
+const userCrud = useFetchApiCrud('users');
 
-  if (response.ok) {
-    const data = await response.json();
-    localStorage.setItem("token", data.token);
-    router.push({ name: 'home' });
-  } else {
-    console.error("Error logging in");
-  }
+const logins = async () => {
+	const user = { email: email.value, password: password.value };
+	const { data, error } = await userCrud.login(user, {
+		"Content-Type": "application/json",
+	});
+
+	if (error) {
+		console.error("Error logging in:", error);
+		alert("Error logging in: " + error);
+	} else {
+		if (data && data.token) {
+			localStorage.setItem("token", data.token);
+			router.push({ name: 'home' });
+		} else {
+			console.error("No token received");
+			alert("No token received");
+		}
+	}
 };
 
 const goToRegister = () => {
-  router.push({ name: 'register' });
+	router.push({ name: 'register' });
 };
 </script>
 
 <template>
   <div class="flex flex-col items-center justify-center h-full w-full bg-base-200">
-    <div class="card w-96 bg-base-100 shadow-xl">
+    <div class="card w-80 bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Connexion</h2>
-        <form @submit.prevent="login">
+        <form @submit.prevent="logins">
           <div class="form-control">
             <label for="email" class="label">
               <span class="label-text">Email :</span>

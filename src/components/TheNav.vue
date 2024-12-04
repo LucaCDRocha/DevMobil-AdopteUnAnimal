@@ -1,10 +1,12 @@
 <script setup>
-	import { RouterLink, RouterView } from "vue-router";
+	import { RouterLink, useRoute } from "vue-router";
+
+	const route = useRoute();
 </script>
 
 <template>
 	<nav>
-		<ul class="menu menu-horizontal mt-6 w-full bg-primary-content flex justify-around gap-2">
+		<ul class="menu menu-horizontal w-full bg-primary-content flex justify-around gap-2">
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Accueil" to="/" v-slot="{ isActive }">
 					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined align-middle">pets</span>
@@ -12,23 +14,17 @@
 			</li>
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Les likes" to="/favorite" v-slot="{ isActive }">
-					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle"
-						>favorite</span
-					>
+					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle">favorite</span>
 				</RouterLink>
 			</li>
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Messages" to="/chat" v-slot="{ isActive }">
-					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle"
-						>chat</span
-					>
+					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle">chat</span>
 				</RouterLink>
 			</li>
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Profile" to="/account" v-slot="{ isActive }">
-					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle"
-						>account_circle</span
-					>
+					<span :class="{ 'active-link': isActive || route.name === 'updateAccount' }" class="material-symbols-outlined fill align-middle">account_circle</span>
 				</RouterLink>
 			</li>
 		</ul>

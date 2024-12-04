@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 
 const firstName = ref('');
 const lastName = ref('');
@@ -8,33 +9,37 @@ const email = ref('');
 const password = ref('');
 const router = useRouter();
 
-const register = () => {
-  const user = { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password.value };
-  fetch("/api/users/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
-  })
-    .then((response) => {
-      if (response.ok) {
-        router.push({ name: 'login' });
-      } else {
-        console.error("Error registering");
-      }
-    })
-    .catch((error) => {
-      console.error("Error registering", error);
-    });
+const userCrud = useFetchApiCrud('users');
+
+const register = async () => {
+	const user = { firstName: firstName.value, lastName: lastName.value, email: email.value, password: password.value };
+	const { data, error } = await userCrud.create(user, {
+		"Content-Type": "application/json",
+	});
+
+	if (error) {
+		console.error("Error registering");
+	} else {
+		const { data: loginData, error: loginError } = await userCrud.login({ email: email.value, password: password.value }, {
+			"Content-Type": "application/json",
+		});
+		if (loginError) {
+			console.error("Error logging in after registration");
+		} else {
+			localStorage.setItem("token", loginData.token);
+			router.push({ name: 'home' });
+		}
+	}
 };
 
 const goToLogin = () => {
-  router.push({ name: 'login' });
+	router.push({ name: 'login' });
 };
 </script>
 
 <template>
   <div class="flex flex-col items-center justify-center h-full w-full bg-base-200">
-    <div class="card w-96 bg-base-100 shadow-xl">
+    <div class="card w-80 bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">Inscription</h2>
         <form @submit.prevent="register">
