@@ -1,78 +1,109 @@
-import { useFetchApi } from "./useFetchApi";
+import { ref } from 'vue';
 
-/**
- * Fetch data from an API and perform CRUD operations
- *
- * @param {string} path - The path to the API
- * @param {string} [baseUrl=null] - The base URL of the API
- * @param {object} [additionalHeaders={}] - Additional headers to send with each request
- * @returns {Object} The fetch API utilities
- * @property {Function} read - Function to read data
- * @property {Function} readAll - Function to read all data
- * @property {Function} create - Function to create data
- * @property {Function} del - Function to delete data
- * @property {Function} update - Function to update data
- * @property {Function} fetchApiToRef - Function to fetch data and return it in refs
- * @example
- * const userCrud = useFetchApiCrud('users');
- */
-export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
+export function useFetchApiCrud(resource) {
+	const apiUrl = `/api/${resource}`;
+	const isLoading = ref(false);
 
-  const { fetchApiToRef } = useFetchApi(baseUrl, additionalHeaders);
+	const readAll = async (headers) => {
+		isLoading.value = true;
+		try {
+			const response = await fetch(apiUrl, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+			});
+			const data = await response.json();
+			return { data, error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		} finally {
+			isLoading.value = false;
+		}
+	};
 
-  function read(id, headers = {}, timeout = 5000) {
-    return fetchApiToRef({
-      url: `${path}/${id}`,
-      method: 'GET',
-      headers,
-      timeout,
-    });
-  }
+	const read = async (id, headers) => {
+		try {
+			const response = await fetch(`${apiUrl}/${id}`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+			});
+			const data = await response.json();
+			return { data, error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		}
+	};
 
-  function readAll(headers = {}, timeout = 5000) {
-    return fetchApiToRef({
-      url: path,
-      method: 'GET',
-      headers,
-      timeout,
-    });
-  }
+	const create = async (body, headers) => {
+		try {
+			const response = await fetch(apiUrl, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+				body: JSON.stringify(body),
+			});
+			const data = await response.json();
+			return { data, error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		}
+	};
 
-  function create(data, headers = {}, timeout = 5000) {
-    return fetchApiToRef({
-      url: path,
-      data,
-      method: 'POST',
-      headers,
-      timeout,
-    });
-  }
+	const update = async (id, body, headers) => {
+		try {
+			const response = await fetch(`${apiUrl}/${id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+				body: JSON.stringify(body),
+			});
+			const data = await response.json();
+			return { data, error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		}
+	};
 
-  function del(id, headers = {}, timeout = 5000) {
-    return fetchApiToRef({
-      url: `${path}/${id}`,
-      method: 'DELETE',
-      headers,
-      timeout,
-    });
-  }
+	const del = async (id, headers) => {
+		try {
+			const response = await fetch(`${apiUrl}/${id}`, {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+			});
+			return { data: null, error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		}
+	};
 
-  function update(id, data, headers = {}, timeout = 5000) {
-    return fetchApiToRef({
-      url: `${path}/${id}`,
-      data,
-      method: 'PATCH',
-      headers,
-      timeout,
-    });
-  }
+	const login = async (body, headers) => {
+		try {
+			const response = await fetch(`${apiUrl}/login`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+				body: JSON.stringify(body),
+			});
+			const data = await response.json();
+			return { data, error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		}
+	};
 
-  return {
-    read,
-    readAll,
-    create,
-    del,
-    update,
-    fetchApiToRef
-  };
+	return { readAll, read, create, update, del, login, isLoading };
 }

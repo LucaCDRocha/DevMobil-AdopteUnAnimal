@@ -1,75 +1,71 @@
 <script setup>
-	import { ref, onMounted } from "vue";
-	import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { getUserIdFromToken } from "@/utils/token";
+import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 
-	const router = useRouter();
-	const userId = ref(null);
-	const firstName = ref("");
-	const lastName = ref("");
-	const email = ref("");
-	const password = ref("");
-	const showModalSuccess = ref(false);
-	const showModalFailure = ref(false);
+const router = useRouter();
+const userId = ref(null);
+const firstName = ref("");
+const lastName = ref("");
+const email = ref("");
+const password = ref("");
+const showModalSuccess = ref(false);
+const showModalFailure = ref(false);
 
-	const fetchUserInfo = async () => {
-		const token = localStorage.getItem("token");
-		userId.value = localStorage.getItem("user_id");
+const userCrud = useFetchApiCrud('users');
 
-		const response = await fetch(`/api/users/${userId.value}`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+const fetchUserInfo = async () => {
+	const token = localStorage.getItem("token");
+	userId.value = getUserIdFromToken(token);
 
-		if (response.ok) {
-			const data = await response.json();
-			firstName.value = data.firstName;
-			lastName.value = data.lastName;
-			email.value = data.email;
-		} else {
-			alert("Failed to fetch user info");
-		}
-	};
-
-	onMounted(() => {
-		fetchUserInfo();
+	const { data, error } = await userCrud.read(userId.value, {
+		Authorization: `Bearer ${token}`,
 	});
 
-	const updateAccount = async () => {
-		const response = await fetch(`/api/users/${userId.value}`, {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${localStorage.getItem("token")}`,
-			},
-			body: JSON.stringify({
-				firstName: firstName.value,
-				lastName: lastName.value,
-				email: email.value,
-				password: password.value,
-			}),
-		});
+	if (error) {
+		alert("Failed to fetch user info");
+	} else {
+		firstName.value = data.firstName;
+		lastName.value = data.lastName;
+		email.value = data.email;
+	}
+};
 
-		if (response.ok) {
-			showModalSuccess.value = true;
-		} else {
-			showModalFailure.value = true;
-		}
-	};
+onMounted(() => {
+	fetchUserInfo();
+});
 
-	const closeModalSuccess = () => {
-		showModalSuccess.value = false;
-		router.push({ name: "account" });
-	};
+const updateAccount = async () => {
+	const { error } = await userCrud.update(userId.value, {
+		firstName: firstName.value,
+		lastName: lastName.value,
+		email: email.value,
+		password: password.value,
+	}, {
+		"Content-Type": "application/json",
+		Authorization: `Bearer ${localStorage.getItem("token")}`,
+	});
 
-	const closeModalFailure = () => {
-		showModalFailure.value = false;
-	};
+	if (error) {
+		showModalFailure.value = true;
+	} else {
+		showModalSuccess.value = true;
+	}
+};
 
-	const goToAccount = () => {
-		router.push({ name: "account" });
-	};
+const closeModalSuccess = () => {
+	showModalSuccess.value = false;
+	router.push({ name: "account" });
+};
+
+const closeModalFailure = () => {
+	showModalFailure.value = false;
+};
+
+const goToAccount = () => {
+	router.push({ name: "account" });
+};
 </script>
 
 <template>

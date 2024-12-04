@@ -6,21 +6,16 @@ import AccountView from "../views/auth/AccountView.vue";
 import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
+import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+
+const userCrud = useFetchApiCrud('users');
 
 const isAuthenticated = async () => {
-	const response = await fetch("/api/users/isAuthenticated", {
-		method: "GET",
-		headers: {
-			Authorization: `Bearer ${
-				localStorage.getItem("token")
-			}`,
-		},
+	const { error } = await userCrud.read('isAuthenticated', {
+		Authorization: `Bearer ${localStorage.getItem("token")}`,
 	});
 
-  if (!response.ok) {
-    return false;
-  }
-	return true;
+	return !error;
 };
 
 const router = createRouter({
