@@ -6,7 +6,7 @@
 </script>
 
 <template>
-	<main class="flex justify-center items-center h-full w-full">
+	<main class="flex justify-center items-center h-full w-full overflow-scroll">
 		<RouterView />
 	</main>
 

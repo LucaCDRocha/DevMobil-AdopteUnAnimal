@@ -20,7 +20,7 @@ const imageSrc = computed(() => {
 <template>
 <div class="card card-side bg-base-100 shadow-xl w-full ">
 	<figure>
-		<img :src="imageSrc" alt="Card image" class="w-32 h-full object-cover" />
+		<img :src="imageSrc" alt="Card image" class="w-28 h-28 object-cover" />
 	</figure>
 	<div class="card-body p-3">
 		<h2 class="card-title text-lg font-bold">{{ card.nom }}</h2>

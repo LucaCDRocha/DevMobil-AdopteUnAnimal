@@ -29,7 +29,7 @@
 	<div v-if="isLoading" class="flex justify-center items-center h-full w-full">
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
-	<div v-else class="flex flex-col w-full items-center mr-4 ml-4">
+	<div v-else class="flex flex-col w-full items-center h-full overflow-scroll p-4">
 		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ cards.length }} animaux</h1>
 
 		<div class="flex flex-col md:w-1/2 w-full gap-4">

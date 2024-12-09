@@ -48,8 +48,8 @@
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col gap-8 justify-end items-center w-full h-full overflow-hidden pb-4">
-			<div v-if="cards.length === 0" class="flex justify-center items-center h-full w-full text-center text-xl">
-				Plus d'animaux à adopter.
+			<div v-if="cards.length === 0" class="flex justify-center items-center h-full w-enter text-xl">
+				Plus d'animaux disponibles.
 			</div>
 			<div v-else class="stack relative w-80 h-full pt-8">
 				<SwipeableCard
