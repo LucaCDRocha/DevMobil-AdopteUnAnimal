@@ -4,9 +4,6 @@
 	const props = defineProps({
 		card: Object,
 	});
-
-	console.log(props.card);
-
 	const imageSrc = computed(() => {
 		const byteArray = new Uint8Array(props.card.images[0].data.data);
 		const binaryString = byteArray.reduce((data, byte) => data + String.fromCharCode(byte), '');
