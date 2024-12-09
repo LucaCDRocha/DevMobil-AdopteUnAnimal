@@ -6,6 +6,7 @@ import AccountView from "../views/auth/AccountView.vue";
 import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
+import HistoryView from "../views/HistoryView.vue";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 
 const userCrud = useFetchApiCrud('users');
@@ -60,6 +61,11 @@ const router = createRouter({
 			name: "updateAccount",
 			component: UpdateAccountView,
 			meta: { requiresAuth: true },
+		},
+		{
+			path: "/history",
+			name: "history",
+			component: HistoryView,
 		},
 	],
 });
