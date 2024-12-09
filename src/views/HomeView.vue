@@ -1,11 +1,13 @@
 <script setup>
 	import { ref } from "vue";
 	import SwipeableCard from "@/components/SwipeableCard.vue";
+	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 
 	const cards = ref([]);
 	const petCrud = useFetchApiCrud("pets");
 	const { isLoading, readAll, swipe, resetLikes } = petCrud;
+	const selectedPet = ref(null);
 
 	const fetchPets = async () => {
 		const { data, error } = await readAll({
@@ -41,6 +43,14 @@
 			});
 		}
 	};
+
+	const openPetDetails = (pet) => {
+		selectedPet.value = pet;
+	};
+
+	const closePetDetails = () => {
+		selectedPet.value = null;
+	};
 </script>
 
 <template>
@@ -57,7 +67,8 @@
 					:key="card._id"
 					:card="card"
 					:index="index"
-					@swipe="(direction) => handleSwipe(direction, card._id)" />
+					@swipe="(direction) => handleSwipe(direction, card._id)"
+					@click="openPetDetails(card)" />
 			</div>
 			<div v-if="cards.length > 0" class="flex justify-between mt-1 w-72 z-50">
 				<button @click="handleSwipe('left')" class="btn btn-lg btn-error btn-circle">
@@ -68,6 +79,8 @@
 				</button>
 			</div>
 	</div>
+
+	<OverlayPetInfos v-if="selectedPet" :pet="selectedPet" @close="closePetDetails" />
 </template>
 
 <style scoped></style>
