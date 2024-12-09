@@ -105,5 +105,21 @@ export function useFetchApiCrud(resource) {
 		}
 	};
 
-	return { readAll, read, create, update, del, login, isLoading };
+	const swipe = async (id, direction, headers) => {
+		const url = `${apiUrl}/${id}/${direction === "left" ? "dislike" : "like"}`;
+		try {
+			const response = await fetch(url, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+			});
+			return { data: await response.json(), error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		}
+	};
+
+	return { readAll, read, create, update, del, login, swipe, isLoading };
 }
