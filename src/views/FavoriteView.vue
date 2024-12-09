@@ -25,8 +25,11 @@
 
 	fetchPets();
 
-	const openPetDetails = (pet) => {
-		selectedPet.value = pet;
+	const openPetDetails = (pet, event) => {
+		if (!event.target.closest(".btn")) {
+			console.log(event.target);
+			selectedPet.value = pet;
+		}
 	};
 
 	const closePetDetails = () => {
@@ -47,7 +50,7 @@
 				:key="card._id"
 				:card="card"
 				:index="index"
-				@click="openPetDetails(card)"
+				@click="(event) => openPetDetails(card, event)"
 			/>
 		</div>
 	</div>

@@ -44,8 +44,11 @@
 		}
 	};
 
-	const openPetDetails = (pet) => {
-		selectedPet.value = pet;
+	const openPetDetails = (pet, event) => {
+		if (!event.target.closest(".btn")) {
+			console.log(event.target);
+			selectedPet.value = pet;
+		}
 	};
 
 	const closePetDetails = () => {
@@ -68,7 +71,7 @@
 					:card="card"
 					:index="index"
 					@swipe="(direction) => handleSwipe(direction, card._id)"
-					@click="openPetDetails(card)" />
+					@click="(event) => openPetDetails(card, event)" />
 			</div>
 			<div v-if="cards.length > 0" class="flex justify-between mt-1 w-72 z-50">
 				<button @click="handleSwipe('left')" class="btn btn-lg btn-error btn-circle">
