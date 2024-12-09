@@ -6,7 +6,11 @@ const props = defineProps({
 });
 
 console.log(props.card);
+const emit = defineEmits(["remove"]);
 
+const handleFavoriteClick = () => {
+  emit("remove", props.card);
+};
 const imageSrc = computed(() => {
   const byteArray = new Uint8Array(props.card.images[0].data.data);
   const binaryString = byteArray.reduce(
@@ -26,9 +30,13 @@ const imageSrc = computed(() => {
 		<h2 class="card-title text-lg font-bold">{{ card.nom }}</h2>
 		<p class="text-sm">{{  card.spa_id.nom }}</p>
 	</div>
+	<div class="btn btn-success self-center mr-5 " @click="handleFavoriteClick">
+		<span class="material-symbols-outlined fill align-middle">favorite</span>
+	</div>
 	<div class="btn btn-primary self-center mr-5">
 		<span class="material-symbols-outlined fill align-middle">chat</span>
 	</div>
+
 </div>
 </template>
 

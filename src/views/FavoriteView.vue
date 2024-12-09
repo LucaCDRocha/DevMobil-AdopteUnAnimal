@@ -12,6 +12,7 @@
 	const petCrud = useFetchApiCrud(`users/${userId}/likes`);
 	const { isLoading } = petCrud;
 	const selectedPet = ref(null);
+	const emit = defineEmits(['remove']);
 
 	const fetchPets = async () => {
 		const { data, error } = await petCrud.readAll({
@@ -35,6 +36,12 @@
 	const closePetDetails = () => {
 		selectedPet.value = null;
 	};
+	const removeCard = (card) => {
+		console.log("salut toi");
+		
+  cards.value = cards.value.filter(c => c._id !== card._id);
+};
+
 </script>
 
 <template>
@@ -50,6 +57,7 @@
 				:key="card._id"
 				:card="card"
 				:index="index"
+				@remove="removeCard"
 				@click="(event) => openPetDetails(card, event)"
 			/>
 		</div>
