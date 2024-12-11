@@ -10,8 +10,10 @@ const dislikes = ref([]);
 const petCrudLikes = useFetchApiCrud(`users/${userId}/likes`);
 const petCrudDislikes = useFetchApiCrud(`users/${userId}/dislikes`);
 const petCrud = useFetchApiCrud('pets');
+const isLoading = ref(false);
 
 const fetchHistory = async () => {
+	isLoading.value = true;
 	const { data: likesData, error: likesError } = await petCrudLikes.readAll({
 		Authorization: `Bearer ${localStorage.getItem("token")}`,
 	}, 'likes');
@@ -25,6 +27,7 @@ const fetchHistory = async () => {
 	if (!dislikesError) {
 		dislikes.value = dislikesData;
 	}
+	isLoading.value = false;
 };
 
 const deleteLike = async (petId) => {
@@ -47,7 +50,10 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="flex flex-col items-center w-full h-full overflow-scroll p-4">
+	<div v-if="isLoading" class="flex justify-center items-center h-full w-full">
+		<span class="loading loading-spinner loading-lg"></span>
+	</div>
+	<div v-else class="flex flex-col items-center w-full h-full overflow-scroll p-4">
 		<h1 class="text-2xl font-bold text-center my-4">Historique des likes et dislikes</h1>
 		<div class="w-full md:w-1/2">
 			<h2 class="text-xl font-semibold my-2">Likes</h2>
