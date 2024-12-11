@@ -15,6 +15,8 @@
 		});
 		if (!error) {
 			cards.value = data;
+			console.log(data);
+			
 		}
 	};
 
