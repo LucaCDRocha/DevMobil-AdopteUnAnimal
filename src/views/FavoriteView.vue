@@ -20,8 +20,8 @@ const fetchPets = async () => {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
   });
   if (!error) {
-    console.log(data);
     cards.value = data;
+    cards.value.reverse();
   }
 };
 
