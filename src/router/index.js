@@ -9,16 +9,6 @@ import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
 import HistoryView from "../views/HistoryView.vue";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 
-const userCrud = useFetchApiCrud('users');
-
-const isAuthenticated = async () => {
-	const { error } = await userCrud.read('isAuthenticated', {
-		Authorization: `Bearer ${localStorage.getItem("token")}`,
-	});
-
-	return !error;
-};
-
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
@@ -70,8 +60,8 @@ const router = createRouter({
 	],
 });
 
-router.beforeEach(async (to, from, next) => {
-	if (to.meta.requiresAuth && !(await isAuthenticated())) {
+router.beforeEach((to, from, next) => {
+	if (to.meta.requiresAuth && !localStorage.getItem("token")) {
 		next({ name: "login" });
 	} else {
 		next();

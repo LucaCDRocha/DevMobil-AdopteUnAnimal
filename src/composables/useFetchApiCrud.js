@@ -1,8 +1,16 @@
 import { ref } from 'vue';
+import router from '@/router';
 
 export function useFetchApiCrud(resource) {
 	const apiUrl = `/api/${resource}`;
 	const isLoading = ref(false);
+
+	const handleUnauthorized = (response) => {
+		if (response.status === 401) {
+			localStorage.removeItem("token");
+			router.push({ name: "login" });
+		}
+	};
 
 	const readAll = async (headers) => {
 		isLoading.value = true;
@@ -14,6 +22,7 @@ export function useFetchApiCrud(resource) {
 					...headers,
 				},
 			});
+			handleUnauthorized(response);
 			const data = await response.json();
 			return { data, error: !response.ok };
 		} catch (error) {
@@ -32,6 +41,7 @@ export function useFetchApiCrud(resource) {
 					...headers,
 				},
 			});
+			handleUnauthorized(response);
 			const data = await response.json();
 			return { data, error: !response.ok };
 		} catch (error) {
@@ -49,6 +59,7 @@ export function useFetchApiCrud(resource) {
 				},
 				body: JSON.stringify(body),
 			});
+			handleUnauthorized(response);
 			const data = await response.json();
 			return { data, error: !response.ok };
 		} catch (error) {
@@ -66,6 +77,7 @@ export function useFetchApiCrud(resource) {
 				},
 				body: JSON.stringify(body),
 			});
+			handleUnauthorized(response);
 			const data = await response.json();
 			return { data, error: !response.ok };
 		} catch (error) {
@@ -82,6 +94,7 @@ export function useFetchApiCrud(resource) {
 					...headers,
 				},
 			});
+			handleUnauthorized(response);
 			return { data: null, error: !response.ok };
 		} catch (error) {
 			return { data: null, error: true };
@@ -98,6 +111,7 @@ export function useFetchApiCrud(resource) {
 				},
 				body: JSON.stringify(body),
 			});
+			handleUnauthorized(response);
 			const data = await response.json();
 			return { data, error: !response.ok };
 		} catch (error) {
@@ -115,6 +129,7 @@ export function useFetchApiCrud(resource) {
 					...headers,
 				},
 			});
+			handleUnauthorized(response);
 			return { data: await response.json(), error: !response.ok };
 		} catch (error) {
 			return { data: null, error: true };
