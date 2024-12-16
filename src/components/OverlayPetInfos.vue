@@ -81,9 +81,9 @@ const prevImage = (event) => {
         </div>
       </div>
       <div class="modal-action mt-4 sticky bottom-0 justify-center">
-        <d-button @click="$emit('close')" class="btn btn-primary w-full">
+        <button @click="$emit('close')" class="btn btn-primary w-full">
           Fermer
-        </d-button>
+        </button>
       </div>
     </div>
   </dialog>
