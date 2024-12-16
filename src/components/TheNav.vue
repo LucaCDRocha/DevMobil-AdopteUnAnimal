@@ -24,7 +24,7 @@
 			</li>
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Profile" to="/account" v-slot="{ isActive }">
-					<span :class="{ 'active-link': isActive || route.name === 'updateAccount' }" class="material-symbols-outlined fill align-middle">account_circle</span>
+					<span :class="{ 'active-link': isActive || route.name === 'updateAccount' || route.name === 'history' }" class="material-symbols-outlined fill align-middle">account_circle</span>
 				</RouterLink>
 			</li>
 		</ul>

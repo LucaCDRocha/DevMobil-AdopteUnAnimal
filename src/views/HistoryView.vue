@@ -67,7 +67,7 @@
 			<div class="collapse collapse-arrow pb-5 transition-all duration-700 ease-in-out">
 				<input type="checkbox" />
 				<div
-					class="collapse-title text-xl font-medium bg-success rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
+					class="collapse-title text-xl font-medium bg-success text-success-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
 					Vous avez {{ likes.length }} likes
 				</div>
 				<div class="collapse-content flex flex-col w-full gap-4 transition-all duration-700 ease-in-out">
@@ -84,7 +84,7 @@
 			<div class="collapse collapse-arrow pb-5 transition-all duration-700 ease-in-out">
 				<input type="checkbox" />
 				<div
-					class="collapse-title text-xl font-medium bg-error rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
+					class="collapse-title text-xl font-medium bg-error text-error-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
 					Vous avez {{ dislikes.length }} dislikes
 				</div>
 
@@ -100,6 +100,9 @@
 			</div>
 		</div>
 	</div>
+	<button @click="$router.push('/account')" class="btn btn-primary btn-wide fixed bottom-24 shadow-xl">
+		Retour au compte
+	</button>
 </template>
 
 <style scoped></style>
