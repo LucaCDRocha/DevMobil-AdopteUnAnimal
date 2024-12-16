@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-
+import { transformImageData } from "@/utils/imageUtils";
 import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
@@ -11,16 +11,7 @@ const emits = defineEmits(["close"]);
 
 const currentImageIndex = ref(0);
 
-const imageSrc = computed(() => {
-  const byteArray = new Uint8Array(
-    props.pet.images[currentImageIndex.value].data.data
-  );
-  const binaryString = byteArray.reduce(
-    (data, byte) => data + String.fromCharCode(byte),
-    ""
-  );
-  return "data:image/jpeg;base64," + btoa(binaryString);
-});
+const imageSrc = computed(() => transformImageData(props.pet.images[currentImageIndex.value]));
 
 const nextImage = (event) => {
   event.stopPropagation();

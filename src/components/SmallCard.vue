@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { transformImageData } from "@/utils/imageUtils";
 
 const props = defineProps({
   card: Object,
@@ -10,14 +11,7 @@ const emit = defineEmits(["remove"]);
 const handleFavoriteClick = () => {
   emit("remove", props.card);
 };
-const imageSrc = computed(() => {
-  const byteArray = new Uint8Array(props.card.images[0].data.data);
-  const binaryString = byteArray.reduce(
-    (data, byte) => data + String.fromCharCode(byte),
-    ""
-  );
-  return "data:image/jpeg;base64," + btoa(binaryString);
-});
+const imageSrc = computed(() => transformImageData(props.card.images[0]));
 </script>
 
 <template>
