@@ -8,7 +8,6 @@ const props = defineProps({
 });
 
 const emits = defineEmits(["close"]);
-console.log(props.pet);
 
 const currentImageIndex = ref(0);
 

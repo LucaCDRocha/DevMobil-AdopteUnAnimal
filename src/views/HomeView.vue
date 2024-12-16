@@ -50,7 +50,6 @@
 
 	const openPetDetails = (pet, event) => {
 		if (!event.target.closest(".btn")) {
-			console.log(event.target);
 			selectedPet.value = pet;
 		}
 	};

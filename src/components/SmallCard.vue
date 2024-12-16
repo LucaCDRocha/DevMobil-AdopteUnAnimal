@@ -5,7 +5,6 @@ const props = defineProps({
   card: Object,
 });
 
-console.log(props.card);
 const emit = defineEmits(["remove"]);
 
 const handleFavoriteClick = () => {

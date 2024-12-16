@@ -6,7 +6,6 @@ import SmallCard from "@/components/SmallCard.vue";
 import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
 
 const userId = getUserIdFromToken(localStorage.getItem("token"));
-console.log(userId);
 const likes = ref([]);
 const cards = ref([]);
 const petCrudFavorite = useFetchApiCrud(`users/${userId}/likes`);
@@ -29,7 +28,6 @@ fetchPets();
 
 const openPetDetails = (pet, event) => {
   if (!event.target.closest(".btn")) {
-    console.log(event.target);
     selectedPet.value = pet;
   }
 };
@@ -39,7 +37,6 @@ const closePetDetails = () => {
 };
 const removeCard = (card) => {
   cards.value = cards.value.filter((c) => c._id !== card._id);
-  console.log(card._id);
   
   deleteLike(card._id);
 };
