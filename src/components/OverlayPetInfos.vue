@@ -46,25 +46,29 @@ const prevImage = (event) => {
       <div class="mb-4">
         <h3 class="font-bold text-2xl">{{ pet.nom }}</h3>
       </div>
-      <div class="relative w-full h-64 mb-4">
-		
-        <img
-          :src="imageSrc"
-          alt="Pet image"
-          class="w-full h-full object-cover"
-        />
+      <div class="relative w-full h-64 mb-2 flex justify-center items-center">
         <button
           @click="prevImage"
-          class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full w-10 h-10"
+          class="btn btn-circle opacity-80 mx-2 absolute left-0 z-10 text-2xl"
         >
           ‹
         </button>
+        <img
+          :src="imageSrc"
+          alt="Pet image"
+          class="w-full h-full object-cover rounded-lg"
+        />
         <button
           @click="nextImage"
-          class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full w-10 h-10"
+          class="btn btn-circle opacity-80 mx-2 absolute right-0 z-10 text-2xl align-middle text-center"
         >
           ›
         </button>
+      </div>
+      <div class="flex justify-center items-center mb-4">
+        <div class="px-2 py-1 rounded">
+          {{ currentImageIndex + 1 }} / {{ pet.images.length }}
+        </div>
       </div>
       <span v-for="tag in pet.tags" class="badge self-end">{{ tag.nom }}</span>
       <div class="flex flex-col gap-2">
@@ -77,12 +81,16 @@ const prevImage = (event) => {
         </div>
       </div>
       <div class="modal-action mt-4 sticky bottom-0 justify-center">
-        <button @click="$emit('close')" class="btn btn-primary w-full">
+        <d-button @click="$emit('close')" class="btn btn-primary w-full">
           Fermer
-        </button>
+        </d-button>
       </div>
     </div>
   </dialog>
 </template>
 
-<style scoped></style>
+<style scoped>
+.modal-box {
+  padding: 1.5rem;
+}
+</style>
