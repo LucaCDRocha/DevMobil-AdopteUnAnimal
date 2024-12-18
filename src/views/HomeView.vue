@@ -6,8 +6,23 @@
 
 	const cards = ref([]);
 	const petCrud = useFetchApiCrud("pets");
-	const { isLoading, readAll, swipe, resetLikes } = petCrud;
+	const { isLoading, readAll, swipe } = petCrud;
 	const selectedPet = ref(null);
+
+	const tags = ref([]);
+	const tagCrud = useFetchApiCrud("tags");
+	const { readAll: readAllTags } = tagCrud;
+	const selectedTags = ref([]);
+
+	const fetchTags = async () => {
+		const { data, error } = await readAllTags({
+			Authorization: `Bearer ${localStorage.getItem("token")}`,
+		});
+		if (!error) {
+			tags.value = data;
+			console.log(data);
+		}
+	};
 
 	const fetchPets = async () => {
 		const { data, error } = await readAll({
@@ -16,11 +31,11 @@
 		if (!error) {
 			cards.value = data;
 			console.log(data);
-			
 		}
 	};
 
 	fetchPets();
+	fetchTags();
 
 	const handleSwipe = async (direction, cardId = null) => {
 		const currentCardIndex = 0;
@@ -57,6 +72,15 @@
 	const closePetDetails = () => {
 		selectedPet.value = null;
 	};
+
+	const toggleTagSelection = (tag) => {
+		const index = selectedTags.value.indexOf(tag);
+		if (index === -1) {
+			selectedTags.value.push(tag);
+		} else {
+			selectedTags.value.splice(index, 1);
+		}
+	};
 </script>
 
 <template>
@@ -64,26 +88,37 @@
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col gap-8 justify-end items-center w-full h-full overflow-hidden pb-4">
-			<div v-if="cards.length === 0" class="flex justify-center items-center h-full w-enter text-xl">
-				Plus d'animaux disponibles.
+		<div v-if="cards.length === 0" class="flex justify-center items-center h-full w-enter text-xl">
+			Plus d'animaux disponibles.
+		</div>
+		<div v-else class="stack relative w-80 h-full pt-8">
+			<SwipeableCard
+				v-for="(card, index) in cards"
+				:key="card._id"
+				:card="card"
+				:index="index"
+				@swipe="(direction) => handleSwipe(direction, card._id)"
+				@click="(event) => openPetDetails(card, event)" />
+		</div>
+		<div v-if="cards.length > 0" class="flex justify-between mt-1 w-72 z-50">
+			<button @click="() => handleSwipe('left', cards[0]._id)" class="btn btn-lg btn-error btn-circle">
+				<span class="material-symbols-outlined fill align-middle text-3xl">close</span>
+			</button>
+			<div class="dropdown dropdown-top relative indicator">
+				<span v-if="selectedTags.length" class="indicator-item badge badge-accent top-2 right-2">{{ selectedTags.length }}</span>
+				<div tabindex="0" role="button" class="btn m-1">Filtre</div>
+				<ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-1/2 transform -translate-x-1/2">
+					<li v-for="tag in tags" :key="tag._id">
+						<div @click="() => toggleTagSelection(tag)" class="menu-item">
+							<span>{{ tag.nom }}</span>
+						</div>
+					</li>
+				</ul>
 			</div>
-			<div v-else class="stack relative w-80 h-full pt-8">
-				<SwipeableCard
-					v-for="(card, index) in cards"
-					:key="card._id"
-					:card="card"
-					:index="index"
-					@swipe="(direction) => handleSwipe(direction, card._id)"
-					@click="(event) => openPetDetails(card, event)" />
-			</div>
-			<div v-if="cards.length > 0" class="flex justify-between mt-1 w-72 z-50">
-				<button @click="() => handleSwipe('left', cards[0]._id)" class="btn btn-lg btn-error btn-circle">
-					<span class="material-symbols-outlined fill align-middle text-3xl">close</span>
-				</button>
-				<button @click="() => handleSwipe('right', cards[0]._id)" class="btn btn-lg btn-success btn-circle">
-					<span class="material-symbols-outlined fill align-middle text-3xl">favorite</span>
-				</button>
-			</div>
+			<button @click="() => handleSwipe('right', cards[0]._id)" class="btn btn-lg btn-success btn-circle">
+				<span class="material-symbols-outlined fill align-middle text-3xl">favorite</span>
+			</button>
+		</div>
 	</div>
 
 	<OverlayPetInfos v-if="selectedPet" :pet="selectedPet" @close="closePetDetails" />
