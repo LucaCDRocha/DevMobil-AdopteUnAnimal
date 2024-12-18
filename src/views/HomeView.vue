@@ -110,28 +110,29 @@
 			<button @click="() => handleSwipe('left', cards[0]._id)" class="btn btn-lg btn-error btn-circle">
 				<span class="material-symbols-outlined fill align-middle text-3xl">close</span>
 			</button>
-			<div class="dropdown dropdown-top relative indicator">
-				<span v-if="selectedTags.length" class="indicator-item badge badge-accent top-2 right-2">{{
-					selectedTags.length
-				}}</span>
-				<span tabindex="0" role="button" class="btn m-1">Filtre</span>
-				<ul
-					tabindex="0"
-					class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-1/2 transform -translate-x-1/2">
-					<li v-for="tag in tags" :key="tag._id">
-						<div
-							@click="() => toggleTagSelection(tag)"
-							class="menu-item flex justify-between items-center btn"
-							:class="{ 'btn-accent': selectedTags.includes(tag) }">
-							<span>{{ tag.nom }}</span>
-						</div>
-					</li>
-				</ul>
-			</div>
 			<button @click="() => handleSwipe('right', cards[0]._id)" class="btn btn-lg btn-success btn-circle">
 				<span class="material-symbols-outlined fill align-middle text-3xl">favorite</span>
 			</button>
 		</div>
+	</div>
+
+	<div class="dropdown dropdown-top indicator absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
+		<span v-if="selectedTags.length" class="indicator-item badge badge-accent top-2 right-2">{{
+			selectedTags.length
+		}}</span>
+		<span tabindex="0" role="button" class="btn m-1">Filtre</span>
+		<ul
+			tabindex="0"
+			class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-1/2 transform -translate-x-1/2">
+			<li v-for="tag in tags" :key="tag._id">
+				<div
+					@click="() => toggleTagSelection(tag)"
+					class="menu-item flex justify-between items-center btn"
+					:class="{ 'btn-accent': selectedTags.includes(tag) }">
+					<span>{{ tag.nom }}</span>
+				</div>
+			</li>
+		</ul>
 	</div>
 
 	<OverlayPetInfos v-if="selectedPet" :pet="selectedPet" @close="closePetDetails" />
