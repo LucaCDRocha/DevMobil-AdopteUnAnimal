@@ -25,9 +25,14 @@
 	};
 
 	const fetchPets = async () => {
-		const { data, error } = await readAll({
-			Authorization: `Bearer ${localStorage.getItem("token")}`,
-		});
+		const { data, error } = await readAll(
+			{
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+			},
+			{
+				tags: selectedTags.value.map(tag => tag._id).join(","),
+			}
+		);
 		if (!error) {
 			cards.value = data;
 			console.log(data);
@@ -80,6 +85,7 @@
 		} else {
 			selectedTags.value.splice(index, 1);
 		}
+		fetchPets();
 	};
 </script>
 

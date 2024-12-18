@@ -12,10 +12,11 @@ export function useFetchApiCrud(resource) {
 		}
 	};
 
-	const readAll = async (headers) => {
+	const readAll = async (headers, queryParams = {}) => {
 		isLoading.value = true;
 		try {
-			const response = await fetch(apiUrl, {
+			const queryString = new URLSearchParams(queryParams).toString();
+			const response = await fetch(`${apiUrl}?${queryString}`, {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
