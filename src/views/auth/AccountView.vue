@@ -41,6 +41,10 @@ const goToUpdateAccount = () => {
 	router.push({ name: "updateAccount" });
 };
 
+const goToHistory = () => {
+	router.push({ name: "history" });
+};
+
 const showModalDelete = ref(false);
 const showModalDeleteSuccess = ref(false);
 
@@ -91,6 +95,9 @@ const closeModalDeleteSuccess = () => {
 				</div>
 				<div class="form-control mt-6">
 					<button @click="goToUpdateAccount" class="btn btn-primary w-full">Modifier le compte</button>
+				</div>
+				<div class="form-control mt-2">
+					<button @click="goToHistory" class="btn btn-outline btn-primary w-full">Historique des likes et dislikes</button>
 				</div>
 				<div class="form-control mt-2">
 					<button @click="logout" class="btn btn-outline btn-primary w-full">Déconnexion</button>
