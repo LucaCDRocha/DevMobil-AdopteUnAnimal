@@ -7,6 +7,7 @@ import LoginView from "../views/auth/LoginView.vue";
 import RegisterView from "../views/auth/RegisterView.vue";
 import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
 import HistoryView from "../views/HistoryView.vue";
+import AddPetView from "../views/pets/AddPetView.vue";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 
 const router = createRouter({
@@ -56,6 +57,12 @@ const router = createRouter({
 			path: "/history",
 			name: "history",
 			component: HistoryView,
+		},
+		{
+			path: "/pets/add",
+			name: "addPet",
+			component: AddPetView,
+			meta: { requiresAuth: true },
 		},
 	],
 });
