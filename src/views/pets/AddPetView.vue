@@ -3,13 +3,14 @@ import { ref, onMounted } from "vue";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 import { useRouter } from "vue-router";
 import Pica from "pica";
+import CameraComponent from "@/components/CameraComponent.vue";
 
 const pet = ref({
 	nom: "",
 	age: "",
 	description: "",
 	tags: [],
-	images: []
+	images: [],
 });
 
 const availableTags = ref([]);
@@ -19,6 +20,7 @@ const showModalSuccess = ref(false);
 const showModalFailure = ref(false);
 const showModalValidationError = ref(false);
 const validationErrorMessage = ref("");
+const isLoadingImage = ref(false);
 
 const { create } = useFetchApiCrud("pets");
 const { readAll: fetchTags } = useFetchApiCrud("tags");
@@ -32,40 +34,56 @@ const toggleTag = (tagId) => {
 	}
 };
 
+const maxSize = 150; // Adjust this value to avoid error 413
+
+const processImage = async (imageSrc, imageType) => {
+	const pica = Pica();
+	const img = new Image();
+	img.src = imageSrc;
+	isLoadingImage.value = true;
+	await new Promise((resolve) => {
+		img.onload = async () => {
+			const canvas = document.createElement("canvas");
+			canvas.width = img.width;
+			canvas.height = img.height;
+			const ctx = canvas.getContext("2d");
+			ctx.drawImage(img, 0, 0);
+			const resizedCanvas = document.createElement("canvas");
+			resizedCanvas.width = maxSize;
+			resizedCanvas.height = maxSize;
+			await pica.resize(canvas, resizedCanvas);
+			const dataUrl = resizedCanvas.toDataURL(imageType);
+			const response = await fetch(dataUrl);
+			const blob = await response.blob();
+			const buffer = await blob.arrayBuffer();
+			pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: imageType, src: dataUrl });
+			isLoadingImage.value = false;
+			resolve();
+		};
+	});
+};
+
 const handleFileUpload = async (event) => {
 	const files = event.target.files;
-	pet.value.images = [];
-	const pica = Pica();
+	if (pet.value.images.length + files.length > 3) {
+		validationErrorMessage.value = "You can only upload up to 3 images.";
+		showModalValidationError.value = true;
+		return;
+	}
 	for (let i = 0; i < files.length; i++) {
 		const file = files[i];
-		const img = new Image();
-		img.src = URL.createObjectURL(file);
-		await new Promise((resolve) => {
-			img.onload = async () => {
-				const canvas = document.createElement("canvas");
-				canvas.width = img.width;
-				canvas.height = img.height;
-				const ctx = canvas.getContext("2d");
-				ctx.drawImage(img, 0, 0);
-				const resizedCanvas = document.createElement("canvas");
-				const maxSize = 300; // Reduce the size further
-				if (img.width > img.height) {
-					resizedCanvas.width = maxSize;
-					resizedCanvas.height = (img.height * maxSize) / img.width;
-				} else {
-					resizedCanvas.height = maxSize;
-					resizedCanvas.width = (img.width * maxSize) / img.height;
-				}
-				await pica.resize(canvas, resizedCanvas);
-				const dataUrl = resizedCanvas.toDataURL(file.type);
-				const response = await fetch(dataUrl);
-				const blob = await response.blob();
-				const buffer = await blob.arrayBuffer();
-				pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: file.type });
-				resolve();
-			};
-		});
+		await processImage(URL.createObjectURL(file), file.type);
 	}
+};
+
+const captureImage = (imageData) => {
+	if (pet.value.images.length >= 3) {
+		validationErrorMessage.value = "You can only upload up to 3 images.";
+		showModalValidationError.value = true;
+		return;
+	}
+	processImage(imageData, "image/jpeg");
+	closeCamera();
 };
 
 const submitForm = async () => {
@@ -75,9 +93,9 @@ const submitForm = async () => {
 	const petData = {
 		...pet.value,
 		tags: [...selectedTags.value],
-		images: pet.value.images.map(image => ({ ...image }))
+		images: pet.value.images.map((image) => ({ ...image })),
 	};
-    console.log(petData);
+	console.log(petData);
 	const { data, error } = await create(petData, headers);
 	if (!error) {
 		showModalSuccess.value = true;
@@ -100,7 +118,7 @@ const nextStep = () => {
 		return;
 	}
 	if (currentStep.value === 2 && pet.value.images.length === 0) {
-        console.log(pet.value.images);
+		console.log(pet.value.images);
 		validationErrorMessage.value = "Please upload at least one image.";
 		showModalValidationError.value = true;
 		return;
@@ -128,6 +146,27 @@ const closeModalFailure = () => {
 const closeModalValidationError = () => {
 	showModalValidationError.value = false;
 };
+
+const showCamera = ref(false);
+const capturedImage = ref(null);
+
+const openCamera = () => {
+	showCamera.value = true;
+};
+
+const closeCamera = () => {
+	showCamera.value = false;
+};
+
+const fileInput = ref(null);
+
+const openFileDialog = () => {
+	fileInput.value.click();
+};
+
+const removeImage = (index) => {
+	pet.value.images.splice(index, 1);
+};
 </script>
 
 <template>
@@ -153,7 +192,11 @@ const closeModalValidationError = () => {
 							<label for="description" class="label">
 								<span class="label-text">Description:</span>
 							</label>
-							<textarea id="description" v-model="pet.description" class="textarea textarea-bordered" required></textarea>
+							<textarea
+								id="description"
+								v-model="pet.description"
+								class="textarea textarea-bordered"
+								required></textarea>
 						</div>
 					</div>
 					<div v-if="currentStep === 2">
@@ -161,7 +204,38 @@ const closeModalValidationError = () => {
 							<label for="images" class="label">
 								<span class="label-text">Images:</span>
 							</label>
-							<input type="file" id="images" @change="handleFileUpload" class="input input-bordered" multiple />
+							<p class="text-sm text-base-300 mb-2">You can upload up to 3 images</p>
+							<input
+								type="file"
+								id="images"
+								ref="fileInput"
+								@change="handleFileUpload"
+								class="hidden"
+								multiple />
+							<button type="button" class="btn btn-primary mt-2" @click="openFileDialog" :disabled="pet.images.length >= 3 || isLoadingImage">
+								Add Images from Device
+							</button>
+							<button type="button" class="btn btn-secondary mt-2" @click="openCamera" :disabled="pet.images.length >= 3 || isLoadingImage">Take a Picture</button>
+						</div>
+						<div v-if="capturedImage" class="mt-4">
+							<img :src="capturedImage" alt="Captured Image" class="w-full h-auto" />
+						</div>
+						<div v-if="pet.images.length > 0 || isLoadingImage" class="mt-4">
+							<h3 class="text-lg font-bold">Selected Images:</h3>
+							<div class="flex flex-wrap gap-2 mt-2">
+								<div v-for="(image, index) in pet.images" :key="index" class="indicator">
+									<img :src="image.src" alt="Selected Image" class="w-24 h-24 object-cover" />
+									<button
+										type="button"
+										@click="removeImage(index)"
+										class="indicator-item badge badge-error">
+										X
+									</button>
+								</div>
+								<div v-if="isLoadingImage" class="w-24 h-24 flex justify-center items-center">
+									<span class="loading loading-spinner loading-lg"></span>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div v-if="currentStep === 3">
@@ -175,15 +249,16 @@ const closeModalValidationError = () => {
 									v-for="tag in availableTags"
 									:key="tag._id"
 									:class="[ 'badge', 'cursor-pointer', selectedTags.includes(tag._id) ? 'badge-primary' : 'badge-outline' ]"
-									@click="toggleTag(tag._id)"
-								>
+									@click="toggleTag(tag._id)">
 									{{ tag.nom }}
 								</span>
 							</div>
 						</div>
 					</div>
 					<div class="form-control mt-6 flex justify-between">
-						<button type="button" class="btn btn-secondary" @click="prevStep" v-if="currentStep > 1">Previous</button>
+						<button type="button" class="btn btn-secondary" @click="prevStep" v-if="currentStep > 1">
+							Previous
+						</button>
 						<button type="button" class="btn btn-primary" @click="nextStep" v-if="currentStep < 3">Next</button>
 						<button type="submit" class="btn btn-primary" v-if="currentStep === 3">Add Pet</button>
 					</div>
@@ -195,9 +270,7 @@ const closeModalValidationError = () => {
 		<dialog v-show="showModalSuccess" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-success text-6xl">check_circle</span>
-				<h3 class="text-lg font-bold mt-4">
-					Pet Added Successfully
-				</h3>
+				<h3 class="text-lg font-bold mt-4">Pet Added Successfully</h3>
 				<p class="py-4">Your pet has been added successfully.</p>
 				<div class="modal-action">
 					<button @click="closeModalSuccess" class="btn">OK</button>
@@ -209,9 +282,7 @@ const closeModalValidationError = () => {
 		<dialog v-show="showModalFailure" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-error text-6xl">error</span>
-				<h3 class="text-lg font-bold mt-4">
-					Failed to Add Pet
-				</h3>
+				<h3 class="text-lg font-bold mt-4">Failed to Add Pet</h3>
 				<p class="py-4">There was an error adding your pet. Please try again.</p>
 				<div class="modal-action">
 					<button @click="closeModalFailure" class="btn">OK</button>
@@ -223,13 +294,18 @@ const closeModalValidationError = () => {
 		<dialog v-show="showModalValidationError" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-warning text-6xl">warning</span>
-				<h3 class="text-lg font-bold mt-4">
-					Validation Error
-				</h3>
+				<h3 class="text-lg font-bold mt-4">Validation Error</h3>
 				<p class="py-4">{{ validationErrorMessage }}</p>
 				<div class="modal-action">
 					<button @click="closeModalValidationError" class="btn">OK</button>
 				</div>
+			</div>
+		</dialog>
+
+		<!-- Camera Modal -->
+		<dialog v-show="showCamera" class="modal modal-open">
+			<div class="modal-box">
+				<CameraComponent v-if="showCamera" @capture="captureImage" @close="closeCamera" />
 			</div>
 		</dialog>
 	</div>
