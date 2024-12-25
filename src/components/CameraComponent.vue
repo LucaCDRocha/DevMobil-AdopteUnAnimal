@@ -1,12 +1,13 @@
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
+import { processImage } from "@/utils/imageProcessing";
 
 const emit = defineEmits(["capture", "close"]);
 
 const video = ref(null);
 const isCameraActive = ref(false);
 const isCameraLoading = ref(true);
-const useFrontCamera = ref(true);
+const useFrontCamera = ref(false); // Default to back camera
 
 const startCamera = async () => {
 	const constraints = {
@@ -25,14 +26,20 @@ const stopCamera = () => {
 	tracks.forEach((track) => track.stop());
 };
 
-const capture = () => {
+const capture = async () => {
 	const canvas = document.createElement("canvas");
 	canvas.width = video.value.videoWidth;
 	canvas.height = video.value.videoHeight;
 	const ctx = canvas.getContext("2d");
 	ctx.drawImage(video.value, 0, 0, canvas.width, canvas.height);
-	const imageData = canvas.toDataURL("image/jpeg");
-	emit("capture", imageData);
+	const imageDataUrl = canvas.toDataURL("image/jpeg");
+
+	try {
+		const compressedImageDataUrl = await processImage(imageDataUrl, "image/jpeg", 150, 0.5);
+		emit("capture", compressedImageDataUrl);
+	} catch (error) {
+		console.error("Error processing image:", error);
+	}
 };
 
 const close = () => {

@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 import { useRouter } from "vue-router";
-import Pica from "pica";
+import { processImage } from "@/utils/imageProcessing";
 import CameraComponent from "@/components/CameraComponent.vue";
 
 const pet = ref({
@@ -34,52 +34,6 @@ const toggleTag = (tagId) => {
 	}
 };
 
-const maxSize = 200; // Adjust this value to avoid error 413
-
-const processImage = async (imageSrc, imageType) => {
-	const pica = Pica();
-	const img = new Image();
-	img.src = imageSrc;
-	isLoadingImage.value = true;
-	await new Promise((resolve) => {
-		img.onload = async () => {
-			const canvas = document.createElement("canvas");
-			const ctx = canvas.getContext("2d");
-			let width = img.width;
-			let height = img.height;
-
-			canvas.width = width;
-			canvas.height = height;
-			ctx.drawImage(img, 0, 0, width, height);
-
-			// Maintain aspect ratio
-			if (width > height) {
-				if (width > maxSize) {
-					height = Math.round((height * maxSize) / width);
-					width = maxSize;
-				}
-			} else {
-				if (height > maxSize) {
-					width = Math.round((width * maxSize) / height);
-					height = maxSize;
-				}
-			}
-
-			const resizedCanvas = document.createElement("canvas");
-			resizedCanvas.width = width;
-			resizedCanvas.height = height;
-			await pica.resize(canvas, resizedCanvas, { unsharpAmount: 80, unsharpRadius: 0.6, unsharpThreshold: 2 });
-			const dataUrl = resizedCanvas.toDataURL(imageType); // Set quality to 0.9 for better image quality
-			const response = await fetch(dataUrl);
-			const blob = await response.blob();
-			const buffer = await blob.arrayBuffer();
-			pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: imageType, src: dataUrl });
-			isLoadingImage.value = false;
-			resolve();
-		};
-	});
-};
-
 const handleFileUpload = async (event) => {
 	const files = event.target.files;
 	if (pet.value.images.length + files.length > 3) {
@@ -89,17 +43,34 @@ const handleFileUpload = async (event) => {
 	}
 	for (let i = 0; i < files.length; i++) {
 		const file = files[i];
-		await processImage(URL.createObjectURL(file), file.type);
+		const imageDataUrl = URL.createObjectURL(file);
+		try {
+			const compressedImageDataUrl = await processImage(imageDataUrl, file.type);
+			const response = await fetch(compressedImageDataUrl);
+			const blob = await response.blob();
+			const buffer = await blob.arrayBuffer();
+			pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: file.type, src: compressedImageDataUrl });
+		} catch (error) {
+			console.error("Error processing image:", error);
+		}
 	}
 };
 
-const captureImage = (imageData) => {
+const captureImage = async (imageData) => {
 	if (pet.value.images.length >= 3) {
 		validationErrorMessage.value = "You can only upload up to 3 images.";
 		showModalValidationError.value = true;
 		return;
 	}
-	processImage(imageData, "image/jpeg");
+	try {
+		const compressedImageDataUrl = await processImage(imageData, "image/jpeg");
+		const response = await fetch(compressedImageDataUrl);
+		const blob = await response.blob();
+		const buffer = await blob.arrayBuffer();
+		pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: "image/jpeg", src: compressedImageDataUrl });
+	} catch (error) {
+		console.error("Error processing image:", error);
+	}
 	closeCamera();
 };
 
@@ -110,7 +81,7 @@ const submitForm = async () => {
 	const petData = {
 		...pet.value,
 		tags: [...selectedTags.value],
-		images: pet.value.images.map((image) => ({ ...image })),
+		images: pet.value.images.map((image) => ({ data: image.data, imgType: image.imgType })),
 	};
 	console.log(petData);
 	const { data, error } = await create(petData, headers);
