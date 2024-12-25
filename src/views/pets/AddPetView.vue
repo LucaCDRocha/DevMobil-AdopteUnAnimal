@@ -34,6 +34,20 @@ const toggleTag = (tagId) => {
 	}
 };
 
+const processAndAddImage = async (imageDataUrl, imageType) => {
+	isLoadingImage.value = true;
+	try {
+		const compressedImageDataUrl = await processImage(imageDataUrl, imageType);
+		const response = await fetch(compressedImageDataUrl);
+		const blob = await response.blob();
+		const buffer = await blob.arrayBuffer();
+		pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: imageType, src: compressedImageDataUrl });
+	} catch (error) {
+		console.error("Error processing image:", error);
+	}
+	isLoadingImage.value = false;
+};
+
 const handleFileUpload = async (event) => {
 	const files = event.target.files;
 	if (pet.value.images.length + files.length > 3) {
@@ -44,15 +58,7 @@ const handleFileUpload = async (event) => {
 	for (let i = 0; i < files.length; i++) {
 		const file = files[i];
 		const imageDataUrl = URL.createObjectURL(file);
-		try {
-			const compressedImageDataUrl = await processImage(imageDataUrl, file.type);
-			const response = await fetch(compressedImageDataUrl);
-			const blob = await response.blob();
-			const buffer = await blob.arrayBuffer();
-			pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: file.type, src: compressedImageDataUrl });
-		} catch (error) {
-			console.error("Error processing image:", error);
-		}
+		await processAndAddImage(imageDataUrl, file.type);
 	}
 };
 
@@ -62,15 +68,7 @@ const captureImage = async (imageData) => {
 		showModalValidationError.value = true;
 		return;
 	}
-	try {
-		const compressedImageDataUrl = await processImage(imageData, "image/jpeg");
-		const response = await fetch(compressedImageDataUrl);
-		const blob = await response.blob();
-		const buffer = await blob.arrayBuffer();
-		pet.value.images.push({ data: Array.from(new Uint8Array(buffer)), imgType: "image/jpeg", src: compressedImageDataUrl });
-	} catch (error) {
-		console.error("Error processing image:", error);
-	}
+	await processAndAddImage(imageData, "image/jpeg");
 	closeCamera();
 };
 

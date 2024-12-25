@@ -35,7 +35,7 @@ const capture = async () => {
 	const imageDataUrl = canvas.toDataURL("image/jpeg");
 
 	try {
-		const compressedImageDataUrl = await processImage(imageDataUrl, "image/jpeg", 150, 0.5);
+		const compressedImageDataUrl = await processImage(imageDataUrl, "image/jpeg", 130, 0.5);
 		emit("capture", compressedImageDataUrl);
 	} catch (error) {
 		console.error("Error processing image:", error);
