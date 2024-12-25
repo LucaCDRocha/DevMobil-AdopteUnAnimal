@@ -34,7 +34,7 @@ const toggleTag = (tagId) => {
 	}
 };
 
-const maxSize = 150; // Adjust this value to avoid error 413
+const maxSize = 200; // Adjust this value to avoid error 413
 
 const processImage = async (imageSrc, imageType) => {
 	const pica = Pica();
@@ -44,15 +44,32 @@ const processImage = async (imageSrc, imageType) => {
 	await new Promise((resolve) => {
 		img.onload = async () => {
 			const canvas = document.createElement("canvas");
-			canvas.width = img.width;
-			canvas.height = img.height;
 			const ctx = canvas.getContext("2d");
-			ctx.drawImage(img, 0, 0);
+			let width = img.width;
+			let height = img.height;
+
+			canvas.width = width;
+			canvas.height = height;
+			ctx.drawImage(img, 0, 0, width, height);
+
+			// Maintain aspect ratio
+			if (width > height) {
+				if (width > maxSize) {
+					height = Math.round((height * maxSize) / width);
+					width = maxSize;
+				}
+			} else {
+				if (height > maxSize) {
+					width = Math.round((width * maxSize) / height);
+					height = maxSize;
+				}
+			}
+
 			const resizedCanvas = document.createElement("canvas");
-			resizedCanvas.width = maxSize;
-			resizedCanvas.height = maxSize;
-			await pica.resize(canvas, resizedCanvas);
-			const dataUrl = resizedCanvas.toDataURL(imageType);
+			resizedCanvas.width = width;
+			resizedCanvas.height = height;
+			await pica.resize(canvas, resizedCanvas, { unsharpAmount: 80, unsharpRadius: 0.6, unsharpThreshold: 2 });
+			const dataUrl = resizedCanvas.toDataURL(imageType); // Set quality to 0.9 for better image quality
 			const response = await fetch(dataUrl);
 			const blob = await response.blob();
 			const buffer = await blob.arrayBuffer();
