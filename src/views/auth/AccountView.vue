@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getUserIdFromToken } from "@/utils/token";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+import { authHeaders } from "@/utils/authHeaders";
 
 const router = useRouter();
 const userInfo = ref({});
@@ -16,9 +17,7 @@ const fetchUserInfo = async () => {
 	const token = localStorage.getItem("token");
 	const userId = getUserIdFromToken(token);
 
-	const { data, error } = await userCrud.read(userId, {
-		Authorization: `Bearer ${token}`,
-	});
+	const { data, error } = await userCrud.read(userId, authHeaders);
 
 	if (error) {
 		errorMessage.value = "Failed to fetch user info";
@@ -52,9 +51,7 @@ const deleteAccount = async () => {
 	const token = localStorage.getItem("token");
 	const userId = getUserIdFromToken(token);
 
-	const { error } = await userCrud.del(userId, {
-		Authorization: `Bearer ${token}`,
-	});
+	const { error } = await userCrud.del(userId, authHeaders);
 
 	if (error) {
 		errorMessage.value = "Failed to delete account";

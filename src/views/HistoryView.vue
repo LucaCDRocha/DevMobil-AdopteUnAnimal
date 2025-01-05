@@ -3,6 +3,7 @@
 	import { getUserIdFromToken } from "@/utils/token";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 	import HistoryCard from "@/components/HistoryCard.vue";
+	import { authHeaders } from "@/utils/authHeaders";
 
 	const userId = getUserIdFromToken(localStorage.getItem("token"));
 	const likes = ref([]);
@@ -14,23 +15,13 @@
 
 	const fetchHistory = async () => {
 		isLoading.value = true;
-		const { data: likesData, error: likesError } = await petCrudLikes.readAll(
-			{
-				Authorization: `Bearer ${localStorage.getItem("token")}`,
-			},
-			"likes"
-		);
+		const { data: likesData, error: likesError } = await petCrudLikes.readAll(authHeaders, "likes");
 		if (!likesError) {
 			likes.value = likesData;
 			likes.value.reverse();
 		}
 
-		const { data: dislikesData, error: dislikesError } = await petCrudDislikes.readAll(
-			{
-				Authorization: `Bearer ${localStorage.getItem("token")}`,
-			},
-			"dislikes"
-		);
+		const { data: dislikesData, error: dislikesError } = await petCrudDislikes.readAll(authHeaders, "dislikes");
 		if (!dislikesError) {
 			dislikes.value = dislikesData;
 			dislikes.value.reverse();
@@ -40,16 +31,12 @@
 
 	const deleteLike = async (petId) => {
 		likes.value = likes.value.filter((pet) => pet._id !== petId);
-		await petCrud.del(`${petId}/like`, {
-			Authorization: `Bearer ${localStorage.getItem("token")}`,
-		});
+		await petCrud.del(`${petId}/like`, authHeaders);
 	};
 
 	const deleteDislike = async (petId) => {
 		dislikes.value = dislikes.value.filter((pet) => pet._id !== petId);
-		await petCrud.del(`${petId}/dislike`, {
-			Authorization: `Bearer ${localStorage.getItem("token")}`,
-		});
+		await petCrud.del(`${petId}/dislike`, authHeaders);
 	};
 
 	onMounted(() => {

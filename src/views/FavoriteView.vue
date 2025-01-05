@@ -4,6 +4,7 @@ import { getUserIdFromToken } from "../utils/token.js";
 import { ref } from "vue";
 import SmallCard from "@/components/SmallCard.vue";
 import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
+import { authHeaders } from "@/utils/authHeaders";
 
 const userId = getUserIdFromToken(localStorage.getItem("token"));
 const likes = ref([]);
@@ -15,9 +16,7 @@ const selectedPet = ref(null);
 const emit = defineEmits(["remove"]);
 
 const fetchPets = async () => {
-  const { data, error } = await petCrudFavorite.readAll({
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  });
+  const { data, error } = await petCrudFavorite.readAll(authHeaders);
   if (!error) {
     cards.value = data;
     cards.value.reverse();
@@ -43,9 +42,7 @@ const removeCard = (card) => {
 
 const deleteLike = async (petId) => {
     likes.value = likes.value.filter(pet => pet._id !== petId);
-	await petCrud.del(`${petId}/like`, {
-		Authorization: `Bearer ${localStorage.getItem("token")}`,
-	});
+	await petCrud.del(`${petId}/like`, authHeaders);
 };
 </script>
 

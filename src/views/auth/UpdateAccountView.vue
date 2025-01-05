@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getUserIdFromToken } from "@/utils/token";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+import { authHeaders } from "@/utils/authHeaders";
 
 const router = useRouter();
 const userId = ref(null);
@@ -19,9 +20,7 @@ const fetchUserInfo = async () => {
 	const token = localStorage.getItem("token");
 	userId.value = getUserIdFromToken(token);
 
-	const { data, error } = await userCrud.read(userId.value, {
-		Authorization: `Bearer ${token}`,
-	});
+	const { data, error } = await userCrud.read(userId.value, authHeaders);
 
 	if (error) {
 		alert("Failed to fetch user info");
@@ -42,10 +41,7 @@ const updateAccount = async () => {
 		lastName: lastName.value,
 		email: email.value,
 		password: password.value,
-	}, {
-		"Content-Type": "application/json",
-		Authorization: `Bearer ${localStorage.getItem("token")}`,
-	});
+	}, authHeaders);
 
 	if (error) {
 		showModalFailure.value = true;
