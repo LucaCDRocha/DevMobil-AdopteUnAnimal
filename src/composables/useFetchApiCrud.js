@@ -16,7 +16,8 @@ export function useFetchApiCrud(resource) {
 		isLoading.value = true;
 		try {
 			const queryString = new URLSearchParams(queryParams).toString();
-			const response = await fetch(`${apiUrl}?${queryString}`, {
+			const url = queryString ? `${apiUrl}?${queryString}` : apiUrl;
+			const response = await fetch(url, {
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",

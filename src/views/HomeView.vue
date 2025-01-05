@@ -25,13 +25,12 @@
 	};
 
 	const fetchPets = async () => {
+		const queryParams = selectedTags.value.length ? { tags: selectedTags.value.map((tag) => tag._id).join(",") } : {};
 		const { data, error } = await readAll(
 			{
 				Authorization: `Bearer ${localStorage.getItem("token")}`,
 			},
-			{
-				tags: selectedTags.value.map(tag => tag._id).join(","),
-			}
+			queryParams
 		);
 		if (!error) {
 			cards.value = data;
@@ -101,7 +100,9 @@
 	<div v-else class="flex flex-col gap-8 justify-end items-center w-full h-full overflow-hidden pb-4">
 		<div v-if="cards.length === 0" class="flex flex-col justify-center items-center h-full w-full text-xl">
 			Plus d'animaux disponibles.
-			<button v-if="selectedTags.length" @click="clearFilters" class="btn btn-primary mt-4">Effacer les filtres</button>
+			<button v-if="selectedTags.length" @click="clearFilters" class="btn btn-primary mt-4">
+				Effacer les filtres
+			</button>
 		</div>
 		<div v-else class="stack relative w-80 h-full pt-8">
 			<SwipeableCard
@@ -122,7 +123,9 @@
 		</div>
 	</div>
 
-	<div v-if="cards.length !== 0" class="dropdown dropdown-top indicator absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
+	<div
+		v-if="cards.length !== 0"
+		class="dropdown dropdown-top indicator absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
 		<span v-if="selectedTags.length" class="indicator-item badge badge-accent top-2 right-2">{{
 			selectedTags.length
 		}}</span>
