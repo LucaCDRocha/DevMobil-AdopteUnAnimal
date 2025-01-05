@@ -1,4 +1,3 @@
-
 import Pica from "pica";
 
 export const processImage = async (imageSrc, imageType, maxSize = 200, quality = 0.9) => {
