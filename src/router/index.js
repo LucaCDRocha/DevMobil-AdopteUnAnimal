@@ -9,7 +9,11 @@ import RegisterView from "../views/auth/RegisterView.vue";
 import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
 import HistoryView from "../views/HistoryView.vue";
 import PetFormView from "../views/pets/PetFormView.vue";
-import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+import SpaHomeView from "../views/spa/HomeView.vue";
+
+const hasSpa = () => {
+	return localStorage.getItem("spa");
+};
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +21,13 @@ const router = createRouter({
 		{
 			path: "/",
 			name: "home",
-			component: HomeView,
+			component: hasSpa() ? SpaHomeView : HomeView,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/spa",
+			name: "spa",
+			component: SpaHomeView,
 			meta: { requiresAuth: true },
 		},
 		{
