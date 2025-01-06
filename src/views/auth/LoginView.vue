@@ -21,6 +21,7 @@ const logins = async () => {
 	} else {
 		if (data && data.token) {
 			localStorage.setItem("token", data.token);
+      localStorage.setItem("hasSpa", data.hasSpa);
 			router.push({ name: 'home' });
 		} else {
 			console.error("No token received");

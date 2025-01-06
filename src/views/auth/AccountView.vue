@@ -13,6 +13,8 @@
 
 	const userCrud = useFetchApiCrud('users');
 
+	const hasSpa = localStorage.getItem("hasSpa") === "true";
+
 	const fetchUserInfo = async () => {
 		const token = localStorage.getItem("token");
 		const userId = getUserIdFromToken(token);
@@ -33,6 +35,7 @@
 
 	const logout = () => {
 		localStorage.removeItem("token");
+		localStorage.removeItem("hasSpa");
 		router.push({ name: "login" });
 	};
 
@@ -93,7 +96,7 @@
 				<div class="form-control mt-6">
 					<button @click="goToUpdateAccount" class="btn btn-primary w-full">Modifier le compte</button>
 				</div>
-				<div class="form-control mt-2">
+				<div class="form-control mt-2" v-if="!hasSpa">
 					<button @click="goToHistory" class="btn btn-outline btn-primary w-full">
 						Historique des likes et dislikes
 					</button>
