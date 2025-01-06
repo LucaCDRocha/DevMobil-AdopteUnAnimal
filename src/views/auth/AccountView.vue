@@ -1,83 +1,83 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { getUserIdFromToken } from "@/utils/token";
-import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
-import { authHeaders } from "@/utils/authHeaders";
+	import { ref, onMounted } from "vue";
+	import { useRouter } from "vue-router";
+	import { getUserIdFromToken } from "@/utils/token";
+	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+	import { getAuthHeaders } from "@/utils/authHeaders";
 
-const router = useRouter();
-const userInfo = ref({});
+	const router = useRouter();
+	const userInfo = ref({});
 
-const showModalError = ref(false);
-const errorMessage = ref("");
+	const showModalError = ref(false);
+	const errorMessage = ref("");
 
-const userCrud = useFetchApiCrud('users');
+	const userCrud = useFetchApiCrud('users');
 
-const fetchUserInfo = async () => {
-	const token = localStorage.getItem("token");
-	const userId = getUserIdFromToken(token);
+	const fetchUserInfo = async () => {
+		const token = localStorage.getItem("token");
+		const userId = getUserIdFromToken(token);
 
-	const { data, error } = await userCrud.read(userId, authHeaders);
+		const { data, error } = await userCrud.read(userId, getAuthHeaders());
 
-	if (error) {
-		errorMessage.value = "Failed to fetch user info";
-		showModalError.value = true;
-	} else {
-		userInfo.value = data;
-	}
-};
+		if (error) {
+			errorMessage.value = "Failed to fetch user info";
+			showModalError.value = true;
+		} else {
+			userInfo.value = data;
+		}
+	};
 
-onMounted(() => {
-	fetchUserInfo();
-});
+	onMounted(() => {
+		fetchUserInfo();
+	});
 
-const logout = () => {
-	localStorage.removeItem("token");
-	router.push({ name: "login" });
-};
-
-const goToUpdateAccount = () => {
-	router.push({ name: "updateAccount" });
-};
-
-const goToHistory = () => {
-	router.push({ name: "history" });
-};
-
-const showModalDelete = ref(false);
-const showModalDeleteSuccess = ref(false);
-
-const deleteAccount = async () => {
-	const token = localStorage.getItem("token");
-	const userId = getUserIdFromToken(token);
-
-	const { error } = await userCrud.del(userId, authHeaders);
-
-	if (error) {
-		errorMessage.value = "Failed to delete account";
-		showModalError.value = true;
-	} else {
+	const logout = () => {
 		localStorage.removeItem("token");
-		showModalDeleteSuccess.value = true;
-	}
-};
+		router.push({ name: "login" });
+	};
 
-const openModalDelete = () => {
-	showModalDelete.value = true;
-};
+	const goToUpdateAccount = () => {
+		router.push({ name: "updateAccount" });
+	};
 
-const closeModalDelete = () => {
-	showModalDelete.value = false;
-};
+	const goToHistory = () => {
+		router.push({ name: "history" });
+	};
 
-const closeModalError = () => {
-	showModalError.value = false;
-};
+	const showModalDelete = ref(false);
+	const showModalDeleteSuccess = ref(false);
 
-const closeModalDeleteSuccess = () => {
-	showModalDeleteSuccess.value = false;
-	router.push({ name: "login" });
-};
+	const deleteAccount = async () => {
+		const token = localStorage.getItem("token");
+		const userId = getUserIdFromToken(token);
+
+		const { error } = await userCrud.del(userId, getAuthHeaders());
+
+		if (error) {
+			errorMessage.value = "Failed to delete account";
+			showModalError.value = true;
+		} else {
+			localStorage.removeItem("token");
+			showModalDeleteSuccess.value = true;
+		}
+	};
+
+	const openModalDelete = () => {
+		showModalDelete.value = true;
+	};
+
+	const closeModalDelete = () => {
+		showModalDelete.value = false;
+	};
+
+	const closeModalError = () => {
+		showModalError.value = false;
+	};
+
+	const closeModalDeleteSuccess = () => {
+		showModalDeleteSuccess.value = false;
+		router.push({ name: "login" });
+	};
 </script>
 
 <template>
@@ -94,7 +94,9 @@ const closeModalDeleteSuccess = () => {
 					<button @click="goToUpdateAccount" class="btn btn-primary w-full">Modifier le compte</button>
 				</div>
 				<div class="form-control mt-2">
-					<button @click="goToHistory" class="btn btn-outline btn-primary w-full">Historique des likes et dislikes</button>
+					<button @click="goToHistory" class="btn btn-outline btn-primary w-full">
+						Historique des likes et dislikes
+					</button>
 				</div>
 				<div class="form-control mt-2">
 					<button @click="logout" class="btn btn-outline btn-primary w-full">Déconnexion</button>
@@ -145,5 +147,5 @@ const closeModalDeleteSuccess = () => {
 </template>
 
 <style scoped>
-/* Add your styles here */
+	/* Add your styles here */
 </style>

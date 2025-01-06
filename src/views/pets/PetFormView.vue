@@ -5,7 +5,7 @@
 	import { processImage } from "@/utils/imageProcessing";
 	import { transformImageData } from "@/utils/imageUtils";
 	import CameraComponent from "@/components/CameraComponent.vue";
-	import { authHeaders } from "@/utils/authHeaders";
+	import { getAuthHeaders } from "@/utils/authHeaders";
 
 	const pet = ref({
 		nom: "",
@@ -88,8 +88,8 @@
 		};
 		console.log(petData);
 		const { data, error } = isEdit.value
-			? await update(route.params.id, petData, authHeaders)
-			: await create(petData, authHeaders);
+			? await update(route.params.id, petData, getAuthHeaders())
+			: await create(petData, getAuthHeaders());
 		if (!error) {
 			showModalSuccess.value = true;
 		} else {
@@ -103,7 +103,7 @@
 			availableTags.value = data;
 		}
 		if (isEdit.value) {
-			const { data: petData, error: petError } = await fetchPet(route.params.id, authHeaders);
+			const { data: petData, error: petError } = await fetchPet(route.params.id, getAuthHeaders());
 			if (!petError) {
 				pet.value = petData;
 				selectedTags.value = petData.tags.map(tag => tag._id);

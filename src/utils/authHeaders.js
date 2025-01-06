@@ -1,3 +1,3 @@
-export const authHeaders = {
+export const getAuthHeaders = () => ({
 	Authorization: `Bearer ${localStorage.getItem("token")}`,
-};
+});

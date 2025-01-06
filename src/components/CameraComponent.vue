@@ -81,8 +81,8 @@ onBeforeUnmount(() => {
 			<p>Loading camera...</p>
 		</div>
 		<button v-if="!isCameraLoading" @click="capture" class="btn btn-primary mt-2">Capture</button>
-		<button v-if="!isCameraLoading" @click="close" class="btn btn-secondary mt-2">Close</button>
 		<button v-if="!isCameraLoading" @click="switchCamera" class="btn btn-secondary mt-2">Switch Camera</button>
+		<button v-if="!isCameraLoading" @click="close" class="btn btn-secondary mt-2">Close</button>
 	</div>
 </template>
 

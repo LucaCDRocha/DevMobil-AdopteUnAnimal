@@ -3,7 +3,7 @@
 	import { getUserIdFromToken } from "@/utils/token";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 	import HistoryCard from "@/components/HistoryCard.vue";
-	import { authHeaders } from "@/utils/authHeaders";
+	import { getAuthHeaders } from "@/utils/authHeaders";
 
 	const userId = getUserIdFromToken(localStorage.getItem("token"));
 	const likes = ref([]);
@@ -15,13 +15,13 @@
 
 	const fetchHistory = async () => {
 		isLoading.value = true;
-		const { data: likesData, error: likesError } = await petCrudLikes.readAll(authHeaders, "likes");
+		const { data: likesData, error: likesError } = await petCrudLikes.readAll(getAuthHeaders(), "likes");
 		if (!likesError) {
 			likes.value = likesData;
 			likes.value.reverse();
 		}
 
-		const { data: dislikesData, error: dislikesError } = await petCrudDislikes.readAll(authHeaders, "dislikes");
+		const { data: dislikesData, error: dislikesError } = await petCrudDislikes.readAll(getAuthHeaders(), "dislikes");
 		if (!dislikesError) {
 			dislikes.value = dislikesData;
 			dislikes.value.reverse();
@@ -31,12 +31,12 @@
 
 	const deleteLike = async (petId) => {
 		likes.value = likes.value.filter((pet) => pet._id !== petId);
-		await petCrud.del(`${petId}/like`, authHeaders);
+		await petCrud.del(`${petId}/like`, getAuthHeaders());
 	};
 
 	const deleteDislike = async (petId) => {
 		dislikes.value = dislikes.value.filter((pet) => pet._id !== petId);
-		await petCrud.del(`${petId}/dislike`, authHeaders);
+		await petCrud.del(`${petId}/dislike`, getAuthHeaders());
 	};
 
 	onMounted(() => {

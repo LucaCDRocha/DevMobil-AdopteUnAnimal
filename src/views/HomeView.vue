@@ -3,7 +3,7 @@
 	import SwipeableCard from "@/components/SwipeableCard.vue";
 	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
-	import { authHeaders } from "@/utils/authHeaders";
+	import { getAuthHeaders } from "@/utils/authHeaders";
 
 	const cards = ref([]);
 	const petCrud = useFetchApiCrud("pets");
@@ -16,7 +16,7 @@
 	const selectedTags = ref([]);
 
 	const fetchTags = async () => {
-		const { data, error } = await readAllTags(authHeaders);
+		const { data, error } = await readAllTags(getAuthHeaders());
 		if (!error) {
 			tags.value = data;
 			console.log(data);
@@ -26,7 +26,7 @@
 	const fetchPets = async () => {
 		const queryParams = selectedTags.value.length ? { tags: selectedTags.value.map((tag) => tag._id).join(",") } : {};
 		const { data, error } = await readAll(
-			authHeaders,
+			getAuthHeaders(),
 			queryParams
 		);
 		if (!error) {
@@ -57,7 +57,7 @@
 			}, 500);
 
 			if (cardId) {
-				await swipe(cardId, direction, authHeaders);
+				await swipe(cardId, direction, getAuthHeaders());
 			}
 		}
 	};
