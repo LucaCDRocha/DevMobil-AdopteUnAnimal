@@ -15,7 +15,9 @@
 			alt="Card image"
 			class="w-full h-2/3 object-cover" />
 		<div class="p-4 flex flex-col">
-			<span v-for="tag in card.tags" class="badge self-end">{{ tag.nom }}</span>
+			<div class="flex flex-wrap justify-end gap-2 mb-2">
+				<span v-for="tag in card.tags" :key="tag.nom" class="badge">{{ tag.nom }}</span>
+			</div>
 			<h3 class="text-lg font-bold">{{ card.nom }}</h3>
 			<p class="text-gray-600">{{ card.description }}</p>
 		</div>
@@ -23,5 +25,4 @@
 </template>
 
 <style scoped>
-	/* Add styles for card if needed */
 </style>
