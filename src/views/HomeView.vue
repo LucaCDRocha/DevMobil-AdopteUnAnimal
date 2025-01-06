@@ -63,6 +63,9 @@
 	};
 
 	const openPetDetails = (pet, event) => {
+		if (event.target.closest(".swipeable-card")) {
+			return;
+		}
 		if (!event.target.closest(".btn")) {
 			selectedPet.value = pet;
 		}
