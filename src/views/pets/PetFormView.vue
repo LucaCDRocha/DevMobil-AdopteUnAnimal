@@ -177,24 +177,24 @@
 	<div class="flex flex-col items-center justify-center h-full w-full bg-base-200">
 		<div class="card w-80 bg-base-100 shadow-xl">
 			<div class="card-body">
-				<h2 class="card-title">{{ isEdit ? "Edit Pet" : "Add a New Pet" }}</h2>
+				<h2 class="card-title">{{ isEdit ? "Modifier l'animal" : "Ajouter un nouvel animal" }}</h2>
 				<form @submit.prevent="submitForm" class="space-y-4">
 					<div v-if="currentStep === 1">
 						<div class="form-control">
 							<label for="nom" class="label">
-								<span class="label-text">Name:</span>
+								<span class="label-text">Nom :</span>
 							</label>
 							<input type="text" id="nom" v-model="pet.nom" class="input input-bordered" required />
 						</div>
 						<div class="form-control">
 							<label for="age" class="label">
-								<span class="label-text">Age:</span>
+								<span class="label-text">Âge :</span>
 							</label>
 							<input type="number" id="age" v-model="pet.age" class="input input-bordered" required />
 						</div>
 						<div class="form-control">
 							<label for="description" class="label">
-								<span class="label-text">Description:</span>
+								<span class="label-text">Description :</span>
 							</label>
 							<textarea
 								id="description"
@@ -206,9 +206,9 @@
 					<div v-if="currentStep === 2">
 						<div class="form-control">
 							<label for="images" class="label">
-								<span class="label-text">Images:</span>
+								<span class="label-text">Images :</span>
 							</label>
-							<p class="text-sm text-base-300 mb-2">You can upload up to 3 images</p>
+							<p class="text-sm text-base-300 mb-2">Vous pouvez télécharger jusqu'à 3 images</p>
 							<input
 								type="file"
 								id="images"
@@ -221,21 +221,21 @@
 								class="btn btn-primary mt-2"
 								@click="openFileDialog"
 								:disabled="pet.images.length >= 3 || isLoadingImage">
-								Add Images from Device
+								Ajouter des images depuis l'appareil
 							</button>
 							<button
 								type="button"
 								class="btn btn-secondary mt-2"
 								@click="openCamera"
 								:disabled="pet.images.length >= 3 || isLoadingImage">
-								Take a Picture
+								Prendre une photo
 							</button>
 						</div>
 						<div v-if="capturedImage" class="mt-4">
 							<img :src="capturedImage" alt="Captured Image" class="w-full h-auto" />
 						</div>
 						<div v-if="pet.images.length > 0 || isLoadingImage" class="mt-4">
-							<h3 class="text-lg font-bold">Selected Images:</h3>
+							<h3 class="text-lg font-bold">Images sélectionnées :</h3>
 							<div class="flex flex-wrap gap-2 mt-2">
 								<div v-for="(image, index) in pet.images" :key="index" class="indicator">
 									<img :src="image.src" alt="Selected Image" class="w-24 h-24 object-cover" />
@@ -252,9 +252,9 @@
 					<div v-if="currentStep === 3">
 						<div class="form-control">
 							<label class="label">
-								<span class="label-text">Tags:</span>
+								<span class="label-text">Tags :</span>
 							</label>
-							<p class="text-sm text-base-300 mb-2">Select up to 4 tags</p>
+							<p class="text-sm text-base-300 mb-2">Sélectionnez jusqu'à 4 tags</p>
 							<div class="flex flex-wrap gap-2">
 								<span
 									v-for="tag in availableTags"
@@ -272,11 +272,11 @@
 					</div>
 					<div class="form-control mt-6 flex justify-between">
 						<button type="button" class="btn btn-secondary" @click="prevStep" v-if="currentStep > 1">
-							Previous
+							Précédent
 						</button>
-						<button type="button" class="btn btn-primary" @click="nextStep" v-if="currentStep < 3">Next</button>
+						<button type="button" class="btn btn-primary" @click="nextStep" v-if="currentStep < 3">Suivant</button>
 						<button type="submit" class="btn btn-primary" v-if="currentStep === 3">
-							{{ isEdit ? "Update Pet" : "Add Pet" }}
+							{{ isEdit ? "Mettre à jour l'animal" : "Ajouter l'animal" }}
 						</button>
 					</div>
 				</form>
@@ -287,8 +287,8 @@
 		<dialog v-show="showModalSuccess" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-success text-6xl">check_circle</span>
-				<h3 class="text-lg font-bold mt-4">Pet {{ isEdit ? "Updated" : "Added" }} Successfully</h3>
-				<p class="py-4">Your pet has been {{ isEdit ? "updated" : "added" }} successfully.</p>
+				<h3 class="text-lg font-bold mt-4">Animal {{ isEdit ? "mis à jour" : "ajouté" }} avec succès</h3>
+				<p class="py-4">Votre animal a été {{ isEdit ? "mis à jour" : "ajouté" }} avec succès.</p>
 				<div class="modal-action">
 					<button @click="closeModalSuccess" class="btn">OK</button>
 				</div>
@@ -299,8 +299,8 @@
 		<dialog v-show="showModalFailure" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-error text-6xl">error</span>
-				<h3 class="text-lg font-bold mt-4">Failed to {{ isEdit ? "Update" : "Add" }} Pet</h3>
-				<p class="py-4">There was an error {{ isEdit ? "updating" : "adding" }} your pet. Please try again.</p>
+				<h3 class="text-lg font-bold mt-4">Échec de {{ isEdit ? "la mise à jour" : "l'ajout" }} de l'animal</h3>
+				<p class="py-4">Une erreur s'est produite lors de {{ isEdit ? "la mise à jour" : "l'ajout" }} de votre animal. Veuillez réessayer.</p>
 				<div class="modal-action">
 					<button @click="closeModalFailure" class="btn">OK</button>
 				</div>
@@ -311,7 +311,7 @@
 		<dialog v-show="showModalValidationError" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-warning text-6xl">warning</span>
-				<h3 class="text-lg font-bold mt-4">Validation Error</h3>
+				<h3 class="text-lg font-bold mt-4">Erreur de validation</h3>
 				<p class="py-4">{{ validationErrorMessage }}</p>
 				<div class="modal-action">
 					<button @click="closeModalValidationError" class="btn">OK</button>
