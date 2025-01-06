@@ -13,6 +13,7 @@
 	const likeIndicator = ref(false);
 	const dislikeIndicator = ref(false);
 
+
 	const cardRef = ref(null);
 
 	const onSwipe = (direction) => {
