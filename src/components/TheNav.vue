@@ -18,7 +18,7 @@
 				</RouterLink>
 			</li>
 			<li>
-				<RouterLink class="lg:tooltip" data-tip="Messages" to="/chat" v-slot="{ isActive }">
+				<RouterLink class="lg:tooltip" data-tip="Messages" to="/chats" v-slot="{ isActive }">
 					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle">chat</span>
 				</RouterLink>
 			</li>
