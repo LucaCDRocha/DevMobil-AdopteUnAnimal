@@ -1,71 +1,67 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { getUserIdFromToken } from "@/utils/token";
-import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+	import { ref, onMounted } from "vue";
+	import { useRouter } from "vue-router";
+	import { getUserIdFromToken } from "@/utils/token";
+	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+	import { getAuthHeaders } from "@/utils/authHeaders";
 
-const router = useRouter();
-const userId = ref(null);
-const firstName = ref("");
-const lastName = ref("");
-const email = ref("");
-const password = ref("");
-const showModalSuccess = ref(false);
-const showModalFailure = ref(false);
+	const router = useRouter();
+	const userId = ref(null);
+	const firstName = ref("");
+	const lastName = ref("");
+	const email = ref("");
+	const password = ref("");
+	const showModalSuccess = ref(false);
+	const showModalFailure = ref(false);
 
-const userCrud = useFetchApiCrud('users');
+	const userCrud = useFetchApiCrud('users');
 
-const fetchUserInfo = async () => {
-	const token = localStorage.getItem("token");
-	userId.value = getUserIdFromToken(token);
+	const fetchUserInfo = async () => {
+		const token = localStorage.getItem("token");
+		userId.value = getUserIdFromToken(token);
 
-	const { data, error } = await userCrud.read(userId.value, {
-		Authorization: `Bearer ${token}`,
+		const { data, error } = await userCrud.read(userId.value, getAuthHeaders());
+
+		if (error) {
+			alert("Failed to fetch user info");
+		} else {
+			firstName.value = data.firstName;
+			lastName.value = data.lastName;
+			email.value = data.email;
+		}
+	};
+
+	onMounted(() => {
+		fetchUserInfo();
 	});
 
-	if (error) {
-		alert("Failed to fetch user info");
-	} else {
-		firstName.value = data.firstName;
-		lastName.value = data.lastName;
-		email.value = data.email;
-	}
-};
+	const updateAccount = async () => {
+		const { error } = await userCrud.update(userId.value, {
+			firstName: firstName.value,
+			lastName: lastName.value,
+			email: email.value,
+			password: password.value,
+		}, getAuthHeaders());
 
-onMounted(() => {
-	fetchUserInfo();
-});
+		if (error) {
+			showModalFailure.value = true;
+		} else {
+			showModalSuccess.value = true;
+		}
+	};
 
-const updateAccount = async () => {
-	const { error } = await userCrud.update(userId.value, {
-		firstName: firstName.value,
-		lastName: lastName.value,
-		email: email.value,
-		password: password.value,
-	}, {
-		"Content-Type": "application/json",
-		Authorization: `Bearer ${localStorage.getItem("token")}`,
-	});
+	const closeModalSuccess = () => {
+		showModalSuccess.value = false;
+		router.push({ name: "account" });
+	};
 
-	if (error) {
-		showModalFailure.value = true;
-	} else {
-		showModalSuccess.value = true;
-	}
-};
+	const closeModalFailure = () => {
+		showModalFailure.value = false;
+	};
 
-const closeModalSuccess = () => {
-	showModalSuccess.value = false;
-	router.push({ name: "account" });
-};
-
-const closeModalFailure = () => {
-	showModalFailure.value = false;
-};
-
-const goToAccount = () => {
-	router.push({ name: "account" });
-};
+	const goToAccount = () => {
+		router.push({ name: "account" });
+	};
 </script>
 
 <template>
@@ -110,9 +106,7 @@ const goToAccount = () => {
 		<dialog v-show="showModalSuccess" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-success text-6xl">check_circle</span>
-				<h3 class="text-lg font-bold mt-4">
-					Compte mis à jour
-				</h3>
+				<h3 class="text-lg font-bold mt-4">Compte mis à jour</h3>
 				<p class="py-4">Votre compte a été mis à jour avec succès.</p>
 				<div class="modal-action">
 					<button @click="closeModalSuccess" class="btn">OK</button>
@@ -124,9 +118,7 @@ const goToAccount = () => {
 		<dialog v-show="showModalFailure" class="modal modal-open">
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-error text-6xl">error</span>
-				<h3 class="text-lg font-bold mt-4">
-					Échec de la mise à jour
-				</h3>
+				<h3 class="text-lg font-bold mt-4">Échec de la mise à jour</h3>
 				<p class="py-4">La mise à jour de votre compte a échoué. Veuillez réessayer.</p>
 				<div class="modal-action">
 					<button @click="closeModalFailure" class="btn">OK</button>
