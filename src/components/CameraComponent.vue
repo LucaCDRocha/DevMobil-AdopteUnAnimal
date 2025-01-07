@@ -75,7 +75,7 @@
 </script>
 
 <template>
-	<div class="fixed bg-black bg-opacity-50 flex justify-center items-center p-4 h-full">
+	<div class="fixed flex justify-center items-center p-4 h-full">
 		<div class="relative bg-black rounded-lg overflow-hidden shadow-lg w-full max-w-md">
 			<video ref="video" :class="{ mirrored: useFrontCamera }" class="w-full h-full object-cover" autoplay></video>
 			<div
