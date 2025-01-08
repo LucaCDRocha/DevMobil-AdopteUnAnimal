@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { onUnmounted, ref } from "vue";
 import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 import { getUserIdFromToken } from "../../utils/token.js";
 import ChatBubble from "@/components/ChatBubble.vue";
@@ -26,6 +26,14 @@ socket.onopen = () => {
 socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
     chat.value.messages.push(message);
+    // scroll to bottom
+    const chatContainer = document.querySelector(".flex.flex-col.w-full.items-start.h-full.overflow-scroll.p-4");
+    setTimeout(() => {
+        chatContainer.scrollTo({
+            top: chatContainer.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, 100);
 };
 
 const fetchChats = async () => {
@@ -51,6 +59,10 @@ const send = async (e) => {
     newMsg.value = "";
 };
 
+onUnmounted(() => {
+    socket.close();
+});
+
 </script>
 <template>
     <div class="flex flex-col w-full items-start h-full overflow-scroll p-4">
@@ -62,7 +74,7 @@ const send = async (e) => {
             <span class="loading loading-spinner loading-lg"></span>
         </div>
 
-        <div v-else class="flex flex-col w-full items-center mt-3">
+        <div v-else class="flex flex-col w-full items-center mt-3 mb-16">
             <p class="mb-6" v-if="chat.pet_id">
                 <span class="text-lg font-bold">
                     {{ chat.pet_id.nom }}
