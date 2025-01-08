@@ -24,7 +24,13 @@
 	};
 
 	const fetchPets = async () => {
-		const queryParams = selectedTags.value.length ? { tags: selectedTags.value.map((tag) => tag._id).join(",") } : {};
+		isLoading.value = true;
+		const position = await getCurrentPosition();
+		const queryParams = {
+			...selectedTags.value.length && { tags: selectedTags.value.map((tag) => tag._id).join(",") },
+			latitude: position.latitude,
+			longitude: position.longitude
+		};
 		const { data, error } = await readAll(
 			getAuthHeaders(),
 			queryParams
@@ -33,6 +39,15 @@
 			cards.value = data;
 			console.log(data);
 		}
+	};
+
+	const getCurrentPosition = () => {
+		return new Promise((resolve, reject) => {
+			navigator.geolocation.getCurrentPosition(
+				(position) => resolve(position.coords),
+				(error) => reject(error)
+			);
+		});
 	};
 
 	fetchPets();
