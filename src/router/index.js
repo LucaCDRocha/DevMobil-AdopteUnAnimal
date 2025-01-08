@@ -26,12 +26,14 @@ const router = createRouter({
 			meta: { requiresAuth: true },
 		},
 		{
+			// toutes les conversations
 			path: "/chats",
 			name: "chats",
 			component: ChatsView,
 			meta: { requiresAuth: true },
 		},
 		{
+			// une conversation
 			path: "/chats/:id",
 			name: "chat",
 			component: ChatView,
