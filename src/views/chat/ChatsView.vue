@@ -16,7 +16,7 @@
     });
     if (!error) {
       cards.value = data;
-      // console.log(data);
+      console.log(data);
     }
   };
 
@@ -38,10 +38,9 @@
 
     <div class="flex flex-col md:w-1/2 w-full">
       <ConversationCard
-        v-for="(card, index) in cards"
+        v-for="card in cards"
         :key="card._id"
         :card="card"
-        :index="index"
       />
     </div>
   </div>

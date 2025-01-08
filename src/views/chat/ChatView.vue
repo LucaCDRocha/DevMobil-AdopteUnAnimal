@@ -20,6 +20,7 @@ const socket = new WebSocket("ws://localhost:3000");
 
 socket.onopen = () => {
     console.log("Connected to WebSocket server");
+    socket.send(JSON.stringify({ type: "authenticate", userId, adoptionId: id.value }));
 };
 
 socket.onmessage = (event) => {
