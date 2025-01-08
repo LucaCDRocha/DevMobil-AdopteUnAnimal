@@ -7,12 +7,15 @@ const props = defineProps({
   forSpa: Boolean,
 });
 
-const emit = defineEmits(["remove"]);
+const emit = defineEmits(["clickFirstButton", "clickChatButton"]);
 
 const handleClickFirstButton = () => {
   emit("clickFirstButton", props.card);
-
 };
+const handleChatButton =()=>{
+	emit("clickChatButton", props.card);
+}
+
 const imageSrc = computed(() => transformImageData(props.card.images[0]));
 </script>
 
@@ -28,7 +31,7 @@ const imageSrc = computed(() => transformImageData(props.card.images[0]));
 	<div class="btn btn-error self-center mr-5 " @click="handleClickFirstButton">
 		<span class="material-symbols-outlined fill align-middle">{{ forSpa?"edit":"heart_broken" }}</span>
 	</div>
-	<div class="btn btn-success self-center mr-5">
+	<div class="btn btn-success self-center mr-5" @click="handleChatButton">
 		<span class="material-symbols-outlined fill align-middle">chat</span>
 	</div>
 

@@ -7,6 +7,7 @@ const router = useRouter();
 
 const props = defineProps({
   card: Object,
+  forSpa: Boolean,
 });
 
 const imageSrc = computed(() => transformImageData(props.card.pet_id.images[0]));
@@ -23,7 +24,7 @@ const imageSrc = computed(() => transformImageData(props.card.pet_id.images[0]))
 		<div class="card-body p-3">
 			<h2>
 				<span class=" text-lg font-bold">
-					{{ card.pet_id.nom }}
+					{{ forSpa? card.user_id.firstName:card.pet_id.nom }}
 				</span>
 				<span class="text-sm">
 					- {{  card.pet_id.spa_id.nom }}
