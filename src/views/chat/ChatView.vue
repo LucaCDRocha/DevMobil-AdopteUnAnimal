@@ -22,6 +22,7 @@ const fetchChats = async () => {
     });
     if (!error) {
         chat.value = data;
+        console.log(chat.value);
     }
 };
 
@@ -46,7 +47,7 @@ const send = async (e) => {
         </div>
 
         <div v-else class="flex flex-col w-full items-center mt-3">
-            <p class="mb-6">
+            <p class="mb-6" v-if="chat.pet_id">
                 <span class="text-lg font-bold">
                     {{ chat.pet_id.nom }}
                 </span>
@@ -55,7 +56,7 @@ const send = async (e) => {
                 </span>
             </p>
 
-            <div class="w-full">
+            <div class="w-full" v-if="chat.messages">
                 <ChatBubble v-for="(msg, index) in chat.messages" class="mb-2" :key="chat._id" :message="msg"
                     :index="index" :isMe="msg.user_id === userId" />
             </div>
