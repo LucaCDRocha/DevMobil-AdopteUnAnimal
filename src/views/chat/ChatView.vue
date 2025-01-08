@@ -12,6 +12,7 @@ id.value = route.params.id;
 
 const userId = getUserIdFromToken(localStorage.getItem("token"));
 const chat = ref([]);
+const newMsg = ref("");
 const adoptionsCrud = useFetchApiCrud(`/adoptions/${id.value}`);
 const { isLoading } = adoptionsCrud;
 
@@ -26,30 +27,43 @@ const fetchChats = async () => {
 
 fetchChats();
 
+const send = async (e) => {
+    e.preventDefault();
+    // websockets ici
+    console.log(newMsg.value);
+    newMsg.value = "";
+};
 
 </script>
 <template>
-    <div class="flex flex-col w-full items-center h-full overflow-scroll p-4">
+    <div class="flex flex-col w-full items-start h-full overflow-scroll p-4">
+        <button class="btn btn-square absolute" @click="$router.go(-1)">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+
         <div v-if="isLoading" class="flex justify-center items-center h-full w-full">
             <span class="loading loading-spinner loading-lg"></span>
         </div>
 
-        <h2 class="absolut">
-            <span class="text-lg font-bold">
-                {{ chat.pet_id.nom }}
-            </span>
-            <span class="text-sm">
-                - {{  chat.pet_id.spa_id.nom }}
-            </span>
-        </h2>
+        <div v-else class="flex flex-col w-full items-center mt-3">
+            <p class="mb-6">
+                <span class="text-lg font-bold">
+                    {{ chat.pet_id.nom }}
+                </span>
+                <span class="text-sm">
+                    - {{ chat.pet_id.spa_id.nom }}
+                </span>
+            </p>
 
-        <div class="w-full">
-            <ChatBubble v-for="(msg, index) in chat.messages" :key="chat._id" :message="msg" :index="index"
-                :isMe="msg.user_id === userId" />
-        </div>
+            <div class="w-full">
+                <ChatBubble v-for="(msg, index) in chat.messages" class="mb-2" :key="chat._id" :message="msg"
+                    :index="index" :isMe="msg.user_id === userId" />
+            </div>
 
-        <div class="absolut flex justify-center items-end h-full w-full">
-            <input type="text" placeholder="Votre message" class="input input-bordered w-full max-w-xs" />
         </div>
+        <form @submit="send" class="absolute bottom-20 left-0 flex justify-center items-end w-full p-4">
+            <input type="text" v-model="newMsg" placeholder="Votre message" class="input input-bordered w-full" />
+            <button type="submit" class="btn btn-primary ml-2">Envoyer</button>
+        </form>
     </div>
 </template>
