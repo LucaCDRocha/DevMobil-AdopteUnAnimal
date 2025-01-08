@@ -100,9 +100,8 @@ const closeModal = () => {
   <!-- Success Modal -->
   <dialog v-show="showDiscussions" class="modal modal-open">
     <div class="modal-box text-center">
-      <h3 class="text-lg font-bold mt-4">
-        Vous avez {{ adoptions.length }} discussions pour {{ nomPet }}
-      </h3>
+      <h3 class="text-lg font-bold mt-4" v-if="adoptions.length === 0">Il y aucune discussion pour {{ nomPet }} </h3>
+      <h3 class="text-lg font-bold mt-4" v-else>Il y a {{adoptions.length}} discussions pour {{nomPet}} :</h3>
       <ConversationCard
         v-for="(adoption, index) in adoptions"
         :key="adoption._id"
