@@ -25,11 +25,15 @@
 
 	const fetchPets = async () => {
 		isLoading.value = true;
-		const position = await getCurrentPosition();
+		let position = null;
+		try {
+			position = await getCurrentPosition();
+		} catch (error) {
+			console.error("Could not get position:", error);
+		}
 		const queryParams = {
 			...selectedTags.value.length && { tags: selectedTags.value.map((tag) => tag._id).join(",") },
-			latitude: position.latitude,
-			longitude: position.longitude
+			...(position && { latitude: position.latitude, longitude: position.longitude })
 		};
 		const { data, error } = await readAll(
 			getAuthHeaders(),
