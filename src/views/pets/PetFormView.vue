@@ -106,7 +106,7 @@
 			const { data: petData, error: petError } = await fetchPet(route.params.id, getAuthHeaders());
 			if (!petError) {
 				pet.value = petData;
-				selectedTags.value = petData.tags.map(tag => tag._id);
+				selectedTags.value = petData.tags.map((tag) => tag._id);
 				pet.value.images = petData.images.map((image) => ({
 					...image,
 					src: transformImageData(image),
@@ -271,10 +271,12 @@
 						</div>
 					</div>
 					<div class="form-control mt-6 flex justify-between">
-						<button type="button" class="btn btn-secondary" @click="prevStep" v-if="currentStep > 1">
+						<button type="button" class="btn btn-secondary mb-2" @click="prevStep" v-if="currentStep > 1">
 							Précédent
 						</button>
-						<button type="button" class="btn btn-primary" @click="nextStep" v-if="currentStep < 3">Suivant</button>
+						<button type="button" class="btn btn-primary" @click="nextStep" v-if="currentStep < 3">
+							Suivant
+						</button>
 						<button type="submit" class="btn btn-primary" v-if="currentStep === 3">
 							{{ isEdit ? "Mettre à jour l'animal" : "Ajouter l'animal" }}
 						</button>
@@ -300,7 +302,10 @@
 			<div class="modal-box text-center">
 				<span class="material-symbols-outlined text-error text-6xl">error</span>
 				<h3 class="text-lg font-bold mt-4">Échec de {{ isEdit ? "la mise à jour" : "l'ajout" }} de l'animal</h3>
-				<p class="py-4">Une erreur s'est produite lors de {{ isEdit ? "la mise à jour" : "l'ajout" }} de votre animal. Veuillez réessayer.</p>
+				<p class="py-4">
+					Une erreur s'est produite lors de {{ isEdit ? "la mise à jour" : "l'ajout" }} de votre animal. Veuillez
+					réessayer.
+				</p>
 				<div class="modal-action">
 					<button @click="closeModalFailure" class="btn">OK</button>
 				</div>
@@ -320,10 +325,9 @@
 		</dialog>
 
 		<!-- Camera Modal -->
+
 		<dialog v-show="showCamera" class="modal modal-open">
-			<div class="modal-box">
-				<CameraComponent v-if="showCamera" @capture="captureImage" @close="closeCamera" />
-			</div>
+			<CameraComponent v-if="showCamera" @capture="captureImage" @close="closeCamera" />
 		</dialog>
 	</div>
 </template>

@@ -11,24 +11,20 @@ import HistoryView from "../views/HistoryView.vue";
 import PetFormView from "../views/pets/PetFormView.vue";
 import SpaHomeView from "../views/spa/HomeView.vue";
 
-const hasSpa = () => {
-	return localStorage.getItem("spa");
-};
-
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
 			path: "/",
 			name: "home",
-			component: hasSpa() ? SpaHomeView : HomeView,
-			meta: { requiresAuth: true },
+			component: HomeView,
+			meta: { requiresAuth: true, hasSpa: true },
 		},
 		{
 			path: "/spa",
 			name: "spa",
 			component: SpaHomeView,
-			meta: { requiresAuth: true },
+			meta: { requiresAuth: true, isSpa: true },
 		},
 		{
 			path: "/favorite",
@@ -93,6 +89,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	if (to.meta.requiresAuth && !localStorage.getItem("token")) {
 		next({ name: "login" });
+	} else if (to.meta.hasSpa && localStorage.getItem("hasSpa") === "true") {
+		next({ name: "spa" });
+	} else if (to.meta.isSpa && localStorage.getItem("hasSpa") === "false") {
+		next({ name: "home" });
 	} else {
 		next();
 	}
