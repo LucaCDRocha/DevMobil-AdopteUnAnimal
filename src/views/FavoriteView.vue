@@ -59,7 +59,8 @@
 				:key="card._id"
 				:card="card"
 				:index="index"
-				@remove="removeCard"
+				:forSpa="false"
+				@clickFirstButton="removeCard"
 				@click="(event) => openPetDetails(card, event)" />
 		</div>
 	</div>
