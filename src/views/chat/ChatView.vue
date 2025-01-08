@@ -16,6 +16,17 @@ const newMsg = ref("");
 const adoptionsCrud = useFetchApiCrud(`/adoptions/${id.value}`);
 const { isLoading } = adoptionsCrud;
 
+const socket = new WebSocket("ws://localhost:3000");
+
+socket.onopen = () => {
+    console.log("Connected to WebSocket server");
+};
+
+socket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    chat.value.messages.push(message);
+};
+
 const fetchChats = async () => {
     const { data, error } = await adoptionsCrud.readAll({
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -30,8 +41,12 @@ fetchChats();
 
 const send = async (e) => {
     e.preventDefault();
-    // websockets ici
-    console.log(newMsg.value);
+    const message = {
+        content: newMsg.value,
+        user_id: userId,
+        date: new Date()
+    };
+    socket.send(JSON.stringify({ adoptionId: id.value, message }));
     newMsg.value = "";
 };
 
