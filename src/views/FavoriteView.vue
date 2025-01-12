@@ -5,44 +5,55 @@
 	import SmallCard from "@/components/SmallCard.vue";
 	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
 	import { getAuthHeaders } from "@/utils/authHeaders";
+	import router from "@/router/index.js";
 
 	const userId = getUserIdFromToken(localStorage.getItem("token"));
 	const likes = ref([]);
 	const cards = ref([]);
 	const petCrudFavorite = useFetchApiCrud(`users/${userId}/likes`);
-	const petCrud = useFetchApiCrud('pets');
+	const petCrud = useFetchApiCrud("pets");
+	const adoptionCrud = useFetchApiCrud("adoptions");
 	const { isLoading } = petCrudFavorite;
 	const selectedPet = ref(null);
 	const emit = defineEmits(["remove"]);
 
 	const fetchPets = async () => {
-	  const { data, error } = await petCrudFavorite.readAll(getAuthHeaders());
-	  if (!error) {
-	    cards.value = data;
-	    cards.value.reverse();
-	  }
+		const { data, error } = await petCrudFavorite.readAll(getAuthHeaders());
+		if (!error) {
+			cards.value = data;
+			cards.value.reverse();
+		}
 	};
 
 	fetchPets();
 
 	const openPetDetails = (pet, event) => {
-	  if (!event.target.closest(".btn")) {
-	    selectedPet.value = pet;
-	  }
+		if (!event.target.closest(".btn")) {
+			selectedPet.value = pet;
+		}
 	};
 
 	const closePetDetails = () => {
-	  selectedPet.value = null;
+		selectedPet.value = null;
 	};
-	const removeCard = (card) => {
-	  cards.value = cards.value.filter((c) => c._id !== card._id);
 
-	  deleteLike(card._id);
+	const removeCard = (card) => {
+		cards.value = cards.value.filter((c) => c._id !== card._id);
+
+		deleteLike(card._id);
 	};
 
 	const deleteLike = async (petId) => {
-	    likes.value = likes.value.filter(pet => pet._id !== petId);
+		likes.value = likes.value.filter((pet) => pet._id !== petId);
 		await petCrud.del(`${petId}/like`, getAuthHeaders());
+	};
+
+	const createAdoption = async (petId) => {
+		const newAdoption = await adoptionCrud.create({ pet_id: petId }, getAuthHeaders());
+		if (newAdoption.error) {
+			router.push({ name: "chat", params: { id: newAdoption.data._id } });
+		}
+		router.push({ name: "chat", params: { id: newAdoption.data._id } });
 	};
 </script>
 
@@ -61,7 +72,8 @@
 				:index="index"
 				:forSpa="false"
 				@clickFirstButton="removeCard"
-				@click="(event) => openPetDetails(card, event)" />
+				@click="(event) => openPetDetails(card, event)"
+				@clickChatButton="createAdoption(card._id)" />
 		</div>
 	</div>
 
