@@ -23,9 +23,18 @@
 		socket.send(JSON.stringify({ type: "authenticate", userId, adoptionId: id.value }));
 	};
 
+	const formatDate = (dateString) => {
+		const date = new Date(dateString);
+		const today = new Date();
+		if (date.toDateString() === today.toDateString()) {
+			return "Aujourd'hui";
+		}
+		return date.toLocaleDateString();
+	};
+
 	const groupMessagesByDate = (messages) => {
 		return messages.reduce((acc, message) => {
-			const date = new Date(message.date).toLocaleDateString();
+			const date = formatDate(message.date);
 			if (!acc[date]) {
 				acc[date] = [];
 			}
