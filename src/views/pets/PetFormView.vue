@@ -17,7 +17,7 @@
 
 	const availableTags = ref([]);
 	const selectedTags = ref([]);
-	const currentStep = ref(2);
+	const currentStep = ref(1);
 	const showModalSuccess = ref(false);
 	const showModalFailure = ref(false);
 	const showModalValidationError = ref(false);
