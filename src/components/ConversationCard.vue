@@ -15,7 +15,7 @@ const imageSrc = computed(() => transformImageData(props.card.pet_id.images[0]))
 </script>
 
 <template>
-	<RouterLink class="card card-side bg-base-100 w-full" :to="'/chats/'+props.card._id">
+	<RouterLink class="card card-side bg-base-100 w-full hover:bg-primary hover:bg-opacity-25 pl-2" :to="'/chats/'+props.card._id">
 		<div class="avatar card-side self-center">
 			<div class="w-16 h-16 rounded-full">
 				<img :src="imageSrc" alt="pet image"  />
@@ -33,6 +33,7 @@ const imageSrc = computed(() => transformImageData(props.card.pet_id.images[0]))
 			<p class="text-sm">{{  card.messages[card.messages.length - 1].content }}</p>
 		</div>
 	</RouterLink>
+	<div class="divider"></div>
 </template>
 
 <style scoped>
