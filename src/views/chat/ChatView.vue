@@ -114,7 +114,7 @@
 			<span class="loading loading-spinner loading-lg"></span>
 		</div>
 
-		<div v-else class="flex flex-col w-full items-center mt-3 mb-16">
+		<div v-else class="flex flex-col w-full items-center mt-12 mb-10">
 			<div class="w-full" v-if="chat.groupedMessages">
 				<div v-for="(messages, date) in chat.groupedMessages" :key="date" class="w-full">
 					<div class="sticky w-fit top-12 left-1/2 -translate-x-1/2 bg-neutral text-center text-neutral-content px-3 py-0.5 rounded-full z-10">{{ date }}</div>
