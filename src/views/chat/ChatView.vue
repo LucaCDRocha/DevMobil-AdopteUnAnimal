@@ -64,7 +64,6 @@
 		if (!error) {
 			chat.value = data;
 			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
-			console.log(chat.value);
 		}
 	};
 
@@ -83,7 +82,6 @@
 
 	onMounted(() => {
 		const chatContainer = document.querySelector(".chat-container");
-		console.log(chatContainer);
 		setTimeout(() => {
 			chatContainer.scrollTo({
 				top: chatContainer.scrollHeight,

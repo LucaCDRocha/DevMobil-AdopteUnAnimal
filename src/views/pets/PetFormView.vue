@@ -86,7 +86,6 @@
 			tags: [...selectedTags.value],
 			images: pet.value.images.map((image) => ({ data: image.data, imgType: image.imgType })),
 		};
-		console.log(petData);
 		const { data, error } = isEdit.value
 			? await update(route.params.id, petData, getAuthHeaders())
 			: await create(petData, getAuthHeaders());
@@ -137,7 +136,6 @@
 			return;
 		}
 		if (currentStep.value === 2 && pet.value.images.length === 0) {
-			console.log(pet.value.images);
 			validationErrorMessage.value = "Please upload at least one image.";
 			showModalValidationError.value = true;
 			return;

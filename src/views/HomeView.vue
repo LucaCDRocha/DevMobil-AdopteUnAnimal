@@ -19,7 +19,6 @@
 		const { data, error } = await readAllTags(getAuthHeaders());
 		if (!error) {
 			tags.value = data;
-			console.log(data);
 		}
 	};
 
@@ -41,7 +40,6 @@
 		);
 		if (!error) {
 			cards.value = data;
-			console.log(data);
 		}
 	};
 
