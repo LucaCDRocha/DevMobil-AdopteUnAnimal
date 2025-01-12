@@ -3,7 +3,7 @@
 
 	const route = useRoute();
 
-	const hasSpa = localStorage.getItem("hasSpa") === 'true';
+	const hasSpa = localStorage.getItem("hasSpa") === "true";
 	console.log(hasSpa);
 </script>
 
@@ -23,15 +23,19 @@
 				</RouterLink>
 			</li>
 			<li v-else>
-				<RouterLink class="lg:tooltip" data-tip="Historique" to="/pets/add" v-slot="{ isActive }">
-					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle"
-						>add_circle</span
+				<RouterLink class="lg:tooltip" data-tip="Ajouter" to="/pets/add" v-slot="{ isActive }">
+					<span
+						:class="{ 'active-link': isActive || route.name === 'editPet' }"
+						class="material-symbols-outlined fill align-middle"
+						>{{route.name === 'editPet' ? 'edit' : 'add_circle'}}</span
 					>
 				</RouterLink>
 			</li>
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Messages" to="/chats" v-slot="{ isActive }">
-					<span :class="{ 'active-link': isActive }" class="material-symbols-outlined fill align-middle"
+					<span
+						:class="{ 'active-link': isActive || route.name === 'chat' }"
+						class="material-symbols-outlined fill align-middle"
 						>chat</span
 					>
 				</RouterLink>

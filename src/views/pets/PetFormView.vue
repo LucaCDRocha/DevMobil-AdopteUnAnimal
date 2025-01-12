@@ -1,5 +1,5 @@
 <script setup>
-	import { ref, onMounted } from "vue";
+	import { ref, onMounted, watch } from "vue";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 	import { useRouter, useRoute } from "vue-router";
 	import { processImage } from "@/utils/imageProcessing";
@@ -97,7 +97,7 @@
 		}
 	};
 
-	onMounted(async () => {
+	const initializeForm = async () => {
 		const { data, error } = await fetchTags();
 		if (!error) {
 			availableTags.value = data;
@@ -112,7 +112,22 @@
 					src: transformImageData(image),
 				}));
 			}
+		} else {
+			pet.value = {
+				nom: "",
+				age: "",
+				description: "",
+				tags: [],
+				images: [],
+			};
 		}
+	};
+
+	onMounted(initializeForm);
+
+	watch(route, async (newRoute) => {
+		isEdit.value = newRoute.name === "editPet";
+		await initializeForm();
 	});
 
 	const nextStep = () => {
@@ -213,7 +228,10 @@
 								<div class="flex flex-wrap gap-5 mt-4 items-center">
 									<div v-for="(image, index) in pet.images" :key="index" class="indicator">
 										<img :src="image.src" alt="Selected Image" class="w-28 h-28 object-cover" />
-										<button type="button" @click="removeImage(index)" class="indicator-item badge badge-error h-8 w-8 material-symbols-outlined text-xl">
+										<button
+											type="button"
+											@click="removeImage(index)"
+											class="indicator-item badge badge-error h-8 w-8 material-symbols-outlined text-xl">
 											delete
 										</button>
 									</div>
