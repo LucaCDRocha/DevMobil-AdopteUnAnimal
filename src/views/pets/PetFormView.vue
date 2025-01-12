@@ -17,7 +17,7 @@
 
 	const availableTags = ref([]);
 	const selectedTags = ref([]);
-	const currentStep = ref(1);
+	const currentStep = ref(2);
 	const showModalSuccess = ref(false);
 	const showModalFailure = ref(false);
 	const showModalValidationError = ref(false);
@@ -152,7 +152,6 @@
 	};
 
 	const showCamera = ref(false);
-	const capturedImage = ref(null);
 
 	const openCamera = () => {
 		showCamera.value = true;
@@ -174,8 +173,8 @@
 </script>
 
 <template>
-	<div class="flex flex-col items-center justify-center h-full w-full bg-base-200">
-		<div class="card w-80 bg-base-100 shadow-xl">
+	<div class="flex flex-col items-center justify-center h-full py-4 w-full overflow-scroll bg-base-200">
+		<div class="card w-80 overflow-scroll bg-base-100 shadow-xl">
 			<div class="card-body">
 				<h2 class="card-title">{{ isEdit ? "Modifier l'animal" : "Ajouter un nouvel animal" }}</h2>
 				<form @submit.prevent="submitForm" class="space-y-4">
@@ -205,10 +204,24 @@
 					</div>
 					<div v-if="currentStep === 2">
 						<div class="form-control">
-							<label for="images" class="label">
+							<label for="images" class="label flex flex-col items-start">
 								<span class="label-text">Images :</span>
+								<p class="text-sm text-base-300">Vous pouvez télécharger jusqu'à 3 images</p>
 							</label>
-							<p class="text-sm text-base-300 mb-2">Vous pouvez télécharger jusqu'à 3 images</p>
+							<div v-if="pet.images.length > 0 || isLoadingImage">
+								<h3 class="text-lg font-bold">Images sélectionnées :</h3>
+								<div class="flex flex-wrap gap-5 mt-4 items-center">
+									<div v-for="(image, index) in pet.images" :key="index" class="indicator">
+										<img :src="image.src" alt="Selected Image" class="w-28 h-28 object-cover" />
+										<button type="button" @click="removeImage(index)" class="indicator-item badge badge-error h-8 w-8 material-symbols-outlined text-xl">
+											delete
+										</button>
+									</div>
+									<div v-if="isLoadingImage" class="w-24 h-24 flex justify-center items-center">
+										<span class="loading loading-spinner loading-lg"></span>
+									</div>
+								</div>
+							</div>
 							<input
 								type="file"
 								id="images"
@@ -216,36 +229,21 @@
 								@change="handleFileUpload"
 								class="hidden"
 								multiple />
-							<button
-								type="button"
-								class="btn btn-primary mt-2"
-								@click="openFileDialog"
-								:disabled="pet.images.length >= 3 || isLoadingImage">
-								Ajouter des images depuis l'appareil
-							</button>
-							<button
-								type="button"
-								class="btn btn-secondary mt-2"
-								@click="openCamera"
-								:disabled="pet.images.length >= 3 || isLoadingImage">
-								Prendre une photo
-							</button>
-						</div>
-						<div v-if="capturedImage" class="mt-4">
-							<img :src="capturedImage" alt="Captured Image" class="w-full h-auto" />
-						</div>
-						<div v-if="pet.images.length > 0 || isLoadingImage" class="mt-4">
-							<h3 class="text-lg font-bold">Images sélectionnées :</h3>
-							<div class="flex flex-wrap gap-2 mt-2">
-								<div v-for="(image, index) in pet.images" :key="index" class="indicator">
-									<img :src="image.src" alt="Selected Image" class="w-24 h-24 object-cover" />
-									<button type="button" @click="removeImage(index)" class="indicator-item badge badge-error">
-										X
-									</button>
-								</div>
-								<div v-if="isLoadingImage" class="w-24 h-24 flex justify-center items-center">
-									<span class="loading loading-spinner loading-lg"></span>
-								</div>
+							<div class="flex flex-col gap-2 my-2">
+								<button
+									type="button"
+									class="btn btn-primary btn-wide flex-shrink material-symbols-outlined text-xl"
+									@click="openFileDialog"
+									:disabled="pet.images.length >= 3 || isLoadingImage">
+									upload
+								</button>
+								<button
+									type="button"
+									class="btn btn-secondary btn-wide flex-shrink material-symbols-outlined text-xl"
+									@click="openCamera"
+									:disabled="pet.images.length >= 3 || isLoadingImage">
+									photo_camera
+								</button>
 							</div>
 						</div>
 					</div>
@@ -270,14 +268,22 @@
 							</div>
 						</div>
 					</div>
-					<div class="form-control mt-6 flex justify-between">
-						<button type="button" class="btn btn-secondary mb-2" @click="prevStep" v-if="currentStep > 1">
+					<div class="form-control mt-6 flex-row justify-between gap-2">
+						<button
+							type="button"
+							class="btn btn-secondary btn-wide flex-shrink"
+							@click="prevStep"
+							v-if="currentStep > 1">
 							Précédent
 						</button>
-						<button type="button" class="btn btn-primary" @click="nextStep" v-if="currentStep < 3">
+						<button
+							type="button"
+							class="btn btn-primary btn-wide flex-shrink"
+							@click="nextStep"
+							v-if="currentStep < 3">
 							Suivant
 						</button>
-						<button type="submit" class="btn btn-primary" v-if="currentStep === 3">
+						<button type="submit" class="btn btn-primary btn-wide flex-shrink" v-if="currentStep === 3">
 							{{ isEdit ? "Mettre à jour l'animal" : "Ajouter l'animal" }}
 						</button>
 					</div>
