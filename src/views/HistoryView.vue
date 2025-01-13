@@ -15,13 +15,13 @@
 
 	const fetchHistory = async () => {
 		isLoading.value = true;
-		const { data: likesData, error: likesError } = await petCrudLikes.readAll(getAuthHeaders(), "likes");
+		const { data: likesData, error: likesError } = await petCrudLikes.readAll(getAuthHeaders());
 		if (!likesError) {
 			likes.value = likesData;
 			likes.value.reverse();
 		}
 
-		const { data: dislikesData, error: dislikesError } = await petCrudDislikes.readAll(getAuthHeaders(), "dislikes");
+		const { data: dislikesData, error: dislikesError } = await petCrudDislikes.readAll(getAuthHeaders());
 		if (!dislikesError) {
 			dislikes.value = dislikesData;
 			dislikes.value.reverse();

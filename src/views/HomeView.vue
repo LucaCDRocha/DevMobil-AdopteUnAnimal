@@ -136,13 +136,13 @@
 		</div>
 	</div>
 
-	<div
+	<details
 		v-if="cards.length !== 0"
 		class="dropdown dropdown-top indicator absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
 		<span v-if="selectedTags.length" class="indicator-item badge badge-accent top-2 right-2">{{
 			selectedTags.length
 		}}</span>
-		<span tabindex="0" role="button" class="btn m-1">Filtre</span>
+		<summary tabindex="0" role="button" class="btn m-1">Filtre</summary>
 		<ul
 			tabindex="0"
 			class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-1/2 transform -translate-x-1/2">
@@ -155,7 +155,7 @@
 				</div>
 			</li>
 		</ul>
-	</div>
+	</details>
 
 	<OverlayPetInfos v-if="selectedPet" :pet="selectedPet" @close="closePetDetails" />
 </template>
