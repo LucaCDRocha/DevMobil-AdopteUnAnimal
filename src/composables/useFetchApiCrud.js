@@ -1,8 +1,8 @@
-import { ref } from 'vue';
-import router from '@/router';
+import { ref } from "vue";
+import router from "@/router";
 
 export function useFetchApiCrud(resource) {
-	const apiUrl = `/api/${resource}`;
+	const apiUrl = `${import.meta.env.VITE_API_URL}/${resource}`;
 	const isLoading = ref(false);
 
 	const handleUnauthorized = (response) => {
