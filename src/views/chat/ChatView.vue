@@ -13,7 +13,7 @@
 	const userId = getUserIdFromToken(localStorage.getItem("token"));
 	const chat = ref([]);
 	const newMsg = ref("");
-	const adoptionsCrud = useFetchApiCrud(`/adoptions/${id.value}`);
+	const adoptionsCrud = useFetchApiCrud(`adoptions/${id.value}`);
 	const { isLoading } = adoptionsCrud;
 
 	const socket = new WebSocket(import.meta.env.VITE_WS_URL);

@@ -6,7 +6,7 @@
 
 	const userId = getUserIdFromToken(localStorage.getItem("token"));
 	const cards = ref([]);
-	const adoptionsCrud = useFetchApiCrud(`/users/${userId}/adoptions`);
+	const adoptionsCrud = useFetchApiCrud(`users/${userId}/adoptions`);
 	const { isLoading } = adoptionsCrud;
 
 	const fetchAdoptions = async () => {
