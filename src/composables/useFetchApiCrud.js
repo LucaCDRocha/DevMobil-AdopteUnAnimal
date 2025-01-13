@@ -138,5 +138,22 @@ export function useFetchApiCrud(resource) {
 		}
 	};
 
-	return { readAll, read, create, update, del, login, swipe, isLoading };
+	const changeStatus = async (id, status, headers) => {
+		try {
+			const response = await fetch(`${apiUrl}/${id}/status`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					...headers,
+				},
+				body: JSON.stringify({ status }),
+			});
+			handleUnauthorized(response);
+			return { data: await response.json(), error: !response.ok };
+		} catch (error) {
+			return { data: null, error: true };
+		}
+	};
+
+	return { readAll, read, create, update, del, login, swipe, changeStatus, isLoading };
 }

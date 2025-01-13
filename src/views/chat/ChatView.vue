@@ -14,7 +14,9 @@
 	const chat = ref([]);
 	const newMsg = ref("");
 	const adoptionsCrud = useFetchApiCrud(`adoptions/${id.value}`);
+	const adoptionStatus = useFetchApiCrud(`adoptions`);
 	const { isLoading } = adoptionsCrud;
+	const hasSpa = localStorage.getItem("hasSpa") === "true";
 
 	const socket = new WebSocket(import.meta.env.VITE_WS_URL);
 
@@ -80,6 +82,16 @@
 		newMsg.value = "";
 	};
 
+	const changeStatus = async (status) => {
+		try {
+			await adoptionStatus.changeStatus(id.value, status, {
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+			});
+		} catch (error) {
+			console.error("Failed to change status", error);
+		}
+	};
+
 	onMounted(() => {
 		const chatContainer = document.querySelector(".chat-container");
 		setTimeout(() => {
@@ -108,6 +120,21 @@
 			</p>
 		</div>
 
+		<div class="absolute top-0 right-0 p-2 z-20" v-if="chat.status === 'pending' && hasSpa">
+			<button @click="changeStatus('accepted')" class="btn btn-success mr-2">Accepter</button>
+			<button @click="changeStatus('rejected')" class="btn btn-error">Rejeter</button>
+		</div>
+		<div
+			v-else
+			class="absolute top-0.5 left-1/2 -translate-x-1/2 p-2 z-20 badge"
+			:class="{
+				'badge-error': chat.status === 'rejected',
+				'badge-success': chat.status === 'accepted',
+				'badge-info': chat.status === 'pending',
+			}">
+			{{ chat.status === "pending" ? "En attente" : chat.status === "accepted" ? "Accepté" : "Refusé" }}
+		</div>
+
 		<div v-if="isLoading" class="flex justify-center items-center h-full w-full">
 			<span class="loading loading-spinner loading-lg"></span>
 		</div>
@@ -115,7 +142,10 @@
 		<div v-else class="flex flex-col w-full items-center mt-12 mb-10">
 			<div class="w-full" v-if="chat.groupedMessages">
 				<div v-for="(messages, date) in chat.groupedMessages" :key="date" class="w-full">
-					<div class="sticky w-fit top-12 left-1/2 -translate-x-1/2 bg-neutral text-center text-neutral-content px-3 py-0.5 rounded-full z-10">{{ date }}</div>
+					<div
+						class="sticky w-fit top-12 left-1/2 -translate-x-1/2 bg-neutral text-center text-neutral-content px-3 py-0.5 rounded-full z-10">
+						{{ date }}
+					</div>
 					<ChatBubble
 						v-for="(msg, index) in messages"
 						class="mb-2 z-0"
@@ -126,7 +156,9 @@
 				</div>
 			</div>
 		</div>
-		<form @submit="send" class="absolute bottom-20 translate-y-2 left-0 flex justify-center items-end w-full p-2 bg-base-100 z-20">
+		<form
+			@submit="send"
+			class="absolute bottom-20 translate-y-2 left-0 flex justify-center items-end w-full p-2 bg-base-100 z-20">
 			<input type="text" v-model="newMsg" placeholder="Votre message" class="input input-bordered w-full" />
 			<button type="submit" class="btn btn-primary ml-2">Envoyer</button>
 		</form>
