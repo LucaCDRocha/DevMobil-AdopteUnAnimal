@@ -29,7 +29,9 @@
 				</span>
 				<span class="text-sm"> - {{ card.pet_id.spa_id.nom }} </span>
 			</h2>
-			<p class="text-sm text-start">{{ card.messages[card.messages.length - 1].content }}</p>
+			<p class="text-sm text-start" v-if="card.messages.length > 0">
+				{{ card.messages[card.messages.length - 1].content }}
+			</p>
 		</div>
 	</RouterLink>
 	<div class="divider"></div>
