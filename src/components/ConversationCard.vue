@@ -10,6 +10,8 @@
 		forSpa: Boolean,
 	});
 
+	console.log(props.card);
+
 	const imageSrc = computed(() => transformImageData(props.card.pet_id.images[0]));
 </script>
 
@@ -27,7 +29,7 @@
 				<span class="text-lg font-bold">
 					{{ forSpa ? card.user_id.firstName : card.pet_id.nom }}
 				</span>
-				<span class="text-sm"> - {{ card.pet_id.spa_id.nom }} </span>
+				<span class="text-sm"> - {{ forSpa ? card.pet_id.nom : card.pet_id.spa_id.nom }} </span>
 			</h2>
 			<p class="text-sm text-start" v-if="card.messages.length > 0">
 				{{ card.messages[card.messages.length - 1].content }}

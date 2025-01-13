@@ -8,6 +8,7 @@
 	const cards = ref([]);
 	const adoptionsCrud = useFetchApiCrud(`users/${userId}/adoptions`);
 	const { isLoading } = adoptionsCrud;
+	const hasSpa = localStorage.getItem("hasSpa") === "true";
 
 	const fetchAdoptions = async () => {
 		const { data, error } = await adoptionsCrud.readAll({
@@ -24,7 +25,7 @@
 		if (filterStatus.value === "all") {
 			return cards.value;
 		}
-		return cards.value.filter(card => card.status === filterStatus.value);
+		return cards.value.filter((card) => card.status === filterStatus.value);
 	});
 
 	const setFilter = (status) => {
@@ -44,21 +45,35 @@
 		</h1>
 
 		<div class="flex justify-center my-4">
-			<button @click="setFilter('all')" :class="{ 'btn-primary': filterStatus === 'all' }" class="btn mx-2">Tous</button>
-			<button @click="setFilter('pending')" :class="{ 'btn-primary': filterStatus === 'pending' }" class="btn mx-2">En attente</button>
-			<button @click="setFilter('accepted')" :class="{ 'btn-primary': filterStatus === 'accepted' }" class="btn mx-2">Accepté</button>
-			<button @click="setFilter('rejected')" :class="{ 'btn-primary': filterStatus === 'rejected' }" class="btn mx-2">Refusé</button>
+			<button @click="setFilter('all')" :class="{ 'btn-primary': filterStatus === 'all' }" class="btn mx-2">
+				Tous
+			</button>
+			<button @click="setFilter('pending')" :class="{ 'btn-primary': filterStatus === 'pending' }" class="btn mx-2">
+				En attente
+			</button>
+			<button
+				@click="setFilter('accepted')"
+				:class="{ 'btn-primary': filterStatus === 'accepted' }"
+				class="btn mx-2">
+				Accepté
+			</button>
+			<button
+				@click="setFilter('rejected')"
+				:class="{ 'btn-primary': filterStatus === 'rejected' }"
+				class="btn mx-2">
+				Refusé
+			</button>
 		</div>
 
 		<div v-if="filteredCards.length === 0" class="text-center text-base-300">
 			Aucune conversation trouvée pour ce statut.
 		</div>
 		<div v-else class="flex flex-col md:w-1/2 w-full">
-			<ConversationCard v-for="card in filteredCards" :key="card._id" :card="card" />
+			<ConversationCard v-for="card in filteredCards" :key="card._id" :card="card" :for-spa="hasSpa" />
 		</div>
 	</div>
 </template>
 
 <style scoped>
-/* No additional styles needed as daisyUI classes are used */
+	/* No additional styles needed as daisyUI classes are used */
 </style>
