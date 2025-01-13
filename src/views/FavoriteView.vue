@@ -22,6 +22,7 @@
 		if (!error) {
 			cards.value = data;
 			cards.value.reverse();
+			console.log(cards.value);
 		}
 	};
 
@@ -48,12 +49,13 @@
 		await petCrud.del(`${petId}/like`, getAuthHeaders());
 	};
 
-	const createAdoption = async (petId) => {
-		const newAdoption = await adoptionCrud.create({ pet_id: petId }, getAuthHeaders());
-		if (newAdoption.error) {
+	const createAdoption = async (pet) => {
+		if (pet.adoptionId === null) {
+			const newAdoption = await adoptionCrud.create({ pet_id: pet._id }, getAuthHeaders());
 			router.push({ name: "chat", params: { id: newAdoption.data._id } });
+		} else {
+			router.push({ name: "chat", params: { id: pet.adoptionId } });
 		}
-		router.push({ name: "chat", params: { id: newAdoption.data._id } });
 	};
 </script>
 
@@ -73,7 +75,7 @@
 				:forSpa="false"
 				@clickFirstButton="removeCard"
 				@click="(event) => openPetDetails(card, event)"
-				@clickChatButton="createAdoption(card._id)" />
+				@clickChatButton="createAdoption(card)" />
 		</div>
 	</div>
 
