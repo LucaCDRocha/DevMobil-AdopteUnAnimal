@@ -4,6 +4,8 @@
 	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 	import { getAuthHeaders } from "@/utils/authHeaders";
+	import { getCookie, setCookie } from "@/utils/cookies";
+	import { getCurrentPosition } from "@/utils/location";
 
 	const cards = ref([]);
 	const petCrud = useFetchApiCrud("pets");
@@ -24,11 +26,14 @@
 
 	const fetchPets = async () => {
 		isLoading.value = true;
-		let position = null;
-		try {
-			position = await getCurrentPosition();
-		} catch (error) {
-			console.error("Could not get position:", error);
+		let position = JSON.parse(getCookie("userPosition"));
+		if (!position) {
+			try {
+				position = await getCurrentPosition();
+				setCookie("userPosition", JSON.stringify(position), 1);
+			} catch (error) {
+				console.error("Could not get position:", error);
+			}
 		}
 		const queryParams = {
 			...selectedTags.value.length && { tags: selectedTags.value.map((tag) => tag._id).join(",") },
@@ -41,15 +46,6 @@
 		if (!error) {
 			cards.value = data;
 		}
-	};
-
-	const getCurrentPosition = () => {
-		return new Promise((resolve, reject) => {
-			navigator.geolocation.getCurrentPosition(
-				(position) => resolve(position.coords),
-				(error) => reject(error)
-			);
-		});
 	};
 
 	fetchPets();
