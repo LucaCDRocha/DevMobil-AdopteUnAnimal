@@ -69,7 +69,7 @@ const showModal = () => {
           {{ currentImageIndex + 1 }} / {{ pet.images.length }}
         </div>
       </div>
-      <span v-for="tag in pet.tags" class="badge self-end">{{ tag.nom }}</span>
+      <span v-for="tag in pet.tags" class="badge self-end mx-1">{{ tag.nom }}</span>
       <div class="flex flex-col gap-2">
         <p class="text-lg">{{ pet.description }}</p>
         <div class="mt-4">

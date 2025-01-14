@@ -64,7 +64,6 @@ const createAdoption = async (pet) => {
 	}
 };
 const showModal = (pet) => {
-	console.log(pet);
 	nomPet.value = pet.nom;
 	showVerifMessagePet.value = pet;
 	showVerifMessage.value = true;

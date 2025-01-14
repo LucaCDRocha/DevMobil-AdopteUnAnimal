@@ -49,7 +49,6 @@ const deleteDislike = async (petId) => {
 };
 
 const showModal = (pet) => {
-  console.log(pet);
   nomPet.value = pet.nom;
   showVerifMessagePet.value = pet;
   showVerifMessage.value = true;
@@ -79,13 +78,14 @@ onMounted(() => {
         <div
           class="collapse-title text-xl font-medium bg-success text-success-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150"
         >
-          Vous avez {{ likes.length }} likes
+          Vous aimez {{ likes.length }} {{likes.length >1 || likes.length ===0 ? " animaux":" animal"}}
+
         </div>
         <div
           class="collapse-content flex flex-col w-full gap-4 transition-all duration-700 ease-in-out"
         >
           <p v-if="likes.length === 0">
-            Vous avez aimé {{ dislikes.length }} animaux
+            Vous aimez {{ likes.length }} {{likes.length >1 || likes.length ===0 ? " animaux":" animal"}}
           </p>
 
           <HistoryCard
@@ -93,7 +93,7 @@ onMounted(() => {
             :key="card._id"
             :card="card"
             :index="index"
-            @click="showModal(card)"
+            @remove="showModal(card)"
           />
         </div>
       </div>
@@ -104,21 +104,22 @@ onMounted(() => {
         <div
           class="collapse-title text-xl font-medium bg-error text-error-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150"
         >
-          Vous avez {{ dislikes.length }} dislikes
+        Vous n'avez pas aimé {{ dislikes.length }} {{dislikes.length >1 || dislikes.length ===0 ? " animaux":" animal"}}
+
         </div>
 
         <div
           class="collapse-content flex flex-col w-full gap-4 transition-all duration-700 ease-in-out"
         >
           <p v-if="dislikes.length === 0">
-            Vous n'avez pas aimé {{ dislikes.length }} animaux
+            Vous n'avez pas aimé {{ dislikes.length }} {{dislikes.length >1 || dislikes.length ===0 ? " animaux":" animal"}}
           </p>
           <HistoryCard
             v-for="(card, index) in dislikes"
             :key="card._id"
             :card="card"
             :index="index"
-            @click="deleteDislike(card._id)"
+            @remove="deleteDislike(card._id)"
           />
         </div>
       </div>
