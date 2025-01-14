@@ -4,7 +4,6 @@
 	const route = useRoute();
 
 	const hasSpa = localStorage.getItem("hasSpa") === "true";
-	console.log(hasSpa);
 </script>
 
 <template>

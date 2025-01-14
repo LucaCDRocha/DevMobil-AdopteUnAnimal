@@ -25,7 +25,6 @@
 		if (!error) {
 			cards.value = data;
 			cards.value.reverse();
-			console.log(cards.value);
 		}
 	};
 
@@ -57,7 +56,6 @@
 		}
 	};
 	const showModal = (pet) => {
-		console.log(pet);
 		nomPet.value = pet.nom;
 		showVerifMessagePet.value = pet;
 		showVerifMessage.value = true;
