@@ -92,7 +92,7 @@ onMounted(() => {
             :key="card._id"
             :card="card"
             :index="index"
-            @click="showModal(card)"
+            @remove="showModal(card)"
           />
         </div>
       </div>
@@ -117,7 +117,7 @@ onMounted(() => {
             :key="card._id"
             :card="card"
             :index="index"
-            @click="deleteDislike(card._id)"
+            @remove="deleteDislike(card._id)"
           />
         </div>
       </div>
