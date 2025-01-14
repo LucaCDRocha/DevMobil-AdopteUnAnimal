@@ -72,7 +72,7 @@
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col w-full items-center h-full overflow-scroll p-4">
-		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ cards.length }} animaux</h1>
+		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ cards.length }} {{cards.length >1 || cards.length ===0 ? " animaux":" animal"}} </h1>
 
 		<div class="flex flex-col md:w-1/2 w-full gap-4">
 			<SmallCard
