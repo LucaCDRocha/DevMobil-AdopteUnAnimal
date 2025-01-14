@@ -5,7 +5,7 @@
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 	import { getAuthHeaders } from "@/utils/authHeaders";
 	import { getCookie, setCookie } from "@/utils/cookies";
-	import { getCurrentPosition } from "@/utils/location";
+	import { getCurrentPosition, positionFetched } from "@/utils/location";
 
 	const cards = ref([]);
 	const petCrud = useFetchApiCrud("pets");
@@ -27,8 +27,9 @@
 	const fetchPets = async () => {
 		isLoading.value = true;
 		let position = JSON.parse(getCookie("userPosition"));
-		if (!position) {
+		if (!position && !positionFetched.value) {
 			try {
+				console.log("getCurrentPosition");
 				position = await getCurrentPosition();
 				setCookie("userPosition", JSON.stringify(position), 1);
 			} catch (error) {
@@ -36,13 +37,10 @@
 			}
 		}
 		const queryParams = {
-			...selectedTags.value.length && { tags: selectedTags.value.map((tag) => tag._id).join(",") },
-			...(position && { latitude: position.latitude, longitude: position.longitude })
+			...(selectedTags.value.length && { tags: selectedTags.value.map((tag) => tag._id).join(",") }),
+			...(position && { latitude: position.latitude, longitude: position.longitude }),
 		};
-		const { data, error } = await readAll(
-			getAuthHeaders(),
-			queryParams
-		);
+		const { data, error } = await readAll(getAuthHeaders(), queryParams);
 		if (!error) {
 			cards.value = data;
 		}
@@ -71,7 +69,6 @@
 
 			if (cardId) {
 				await swipe(cardId, direction, getAuthHeaders());
-				
 			}
 		}
 	};
