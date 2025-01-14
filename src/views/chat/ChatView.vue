@@ -65,6 +65,7 @@
 		});
 		if (!error) {
 			chat.value = data;
+			console.log("chat", chat.value);
 			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
 		}
 	};
@@ -115,18 +116,23 @@
 			</button>
 			<p class="w-full text-center p-2" v-if="chat.pet_id">
 				<span class="text-lg font-bold">
-					{{ chat.pet_id.nom }}
+					{{ hasSpa ? chat.user_id.firstName + " " + chat.user_id.lastName : chat.pet_id.nom }}
 				</span>
-				<span class="text-sm"> - {{ chat.pet_id.spa_id.nom }} </span>
+				<span class="text-sm"> - {{ hasSpa ? chat.pet_id.nom : chat.pet_id.spa_id.nom }} </span>
 			</p>
 		</div>
 
-		<div class="absolute top-0 right-0 p-2 z-20" v-if="chat.status === 'pending' && hasSpa">
-			<button @click="changeStatus('accepted')" class="btn btn-success mr-2">Accepter</button>
-			<button @click="changeStatus('rejected')" class="btn btn-error">Rejeter</button>
+		<div class="absolute top-0 right-0 p-2 z-20" v-if="hasSpa">
+			<details class="dropdown dropdown-end">
+				<summary tabindex="0" class="btn m-1"><span class="material-symbols-outlined">edit</span> status</summary>
+				<ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 gap-2">
+					<li><button class="btn btn-success" @click="changeStatus('accepted')">Accepter</button></li>
+					<li><button class="btn btn-info" @click="changeStatus('pending')">En attente</button></li>
+					<li><button class="btn btn-error" @click="changeStatus('rejected')">Rejeter</button></li>
+				</ul>
+			</details>
 		</div>
 		<div
-			v-else
 			class="absolute top-0.5 left-1/2 -translate-x-1/2 p-2 z-20 badge"
 			:class="{
 				'badge-error': chat.status === 'rejected',
