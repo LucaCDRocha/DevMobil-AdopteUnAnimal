@@ -59,7 +59,7 @@
 		}, 100);
 	};
 
-	const fetchChats = async () => {
+	const fetchChat = async () => {
 		const { data, error } = await adoptionsCrud.readAll({
 			Authorization: `Bearer ${localStorage.getItem("token")}`,
 		});
@@ -69,7 +69,7 @@
 		}
 	};
 
-	fetchChats();
+	fetchChat();
 
 	const send = async (e) => {
 		e.preventDefault();
@@ -87,6 +87,7 @@
 			await adoptionStatus.changeStatus(id.value, status, {
 				Authorization: `Bearer ${localStorage.getItem("token")}`,
 			});
+			fetchChat();
 		} catch (error) {
 			console.error("Failed to change status", error);
 		}
