@@ -49,7 +49,6 @@ const deleteDislike = async (petId) => {
 };
 
 const showModal = (pet) => {
-  console.log(pet);
   nomPet.value = pet.nom;
   showVerifMessagePet.value = pet;
   showVerifMessage.value = true;
@@ -94,7 +93,7 @@ onMounted(() => {
             :key="card._id"
             :card="card"
             :index="index"
-            @click="showModal(card)"
+            @remove="showModal(card)"
           />
         </div>
       </div>
@@ -120,7 +119,7 @@ onMounted(() => {
             :key="card._id"
             :card="card"
             :index="index"
-            @click="deleteDislike(card._id)"
+            @remove="deleteDislike(card._id)"
           />
         </div>
       </div>
