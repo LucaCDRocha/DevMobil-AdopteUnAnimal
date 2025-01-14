@@ -1,11 +1,27 @@
-import './assets/main.css'
+import "./assets/main.css";
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import { setCookie, getCookie } from "@/utils/cookies";
+import { getCurrentPosition, positionFetched } from "@/utils/location";
 
-const app = createApp(App)
+const initializeApp = async () => {
+	const userPosition = JSON.parse(getCookie("userPosition"));
+	if (!positionFetched.value && !userPosition) {
+		try {
+			const position = await getCurrentPosition();
+			setCookie("userPosition", JSON.stringify(position), 1);
+		} catch (error) {
+			console.error("Could not get position:", error);
+		}
+	}
+};
 
-app.use(router)
+const app = createApp(App);
 
-app.mount('#app')
+app.use(router);
+
+initializeApp();
+
+app.mount("#app");
