@@ -45,6 +45,16 @@
 			selectedPet.value = pet;
 		}
 	};
+	const deletePet = async () => {	
+		const { del } = useFetchApiCrud('pets');
+  const { error } = await del(selectedPet.value._id, getAuthHeaders());
+  if (!error) {
+    pets.value = pets.value.filter(pet => pet._id !== selectedPet.value._id);
+    selectedPet.value = null;
+  } else {
+    console.error('Error deleting pet');
+  }
+	};
 
 	const closePetDetails = () => {
 		selectedPet.value = null;
@@ -69,7 +79,7 @@
 <template>
 	<div class="flex flex-col w-full items-center h-full overflow-scroll p-4">
 		<h1 class="text-xl font-semibold text-center my-2">{{ spaName }}</h1>
-		<h2 class="text-lg font-semibold text-center my-2">Vous avez {{ pets.length }} animaux</h2>
+		<h2 class="text-lg font-semibold text-center my-2">Vous avez {{ pets.length }} {{pets.length >1 || pets.length ===0 ? " animaux":" animal"}}</h2>
 		<div class="flex flex-col md:w-1/2 w-full gap-4">
 			<SmallCard
 				v-for="(pet, index) in pets"
@@ -82,7 +92,7 @@
 				@clickChatButton="showModal(pet, pet.nom)" />
 		</div>
 	</div>
-	<OverlayPetInfos v-if="selectedPet" :pet="selectedPet" @close="closePetDetails" />
+	<OverlayPetInfos v-if="selectedPet" :pet="selectedPet" @close="closePetDetails" @delete="deletePet" :forSpa="true" />
 
 	<!-- Success Modal -->
 	<dialog v-show="showDiscussions" class="modal modal-open">
