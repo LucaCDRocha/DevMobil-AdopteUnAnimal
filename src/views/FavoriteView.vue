@@ -86,9 +86,9 @@ const closeModal = () => {
 				:forSpa="false" @clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
 				@clickChatButton="createAdoption(card)" />
 		</div>
-		<div class="flex justify-between items-center mt-4">
+		<div v-if="totalPages > 1" class="flex justify-between items-center mt-4">
 			<button @click="changePage(currentPage - 1,)" :disabled="currentPage === 1" class="btn">Précédent</button>
-			<span>Page {{ currentPage }} sur {{ totalPages }}</span>
+			<span class="m-4">Page {{ currentPage }} sur {{ totalPages }}</span>
 			<button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages"
 				class="btn">Suivant</button>
 		</div>
