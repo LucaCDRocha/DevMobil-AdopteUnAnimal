@@ -1,62 +1,76 @@
 <script setup>
-	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
-	import { getUserIdFromToken } from "../utils/token.js";
-	import { ref } from "vue";
-	import SmallCard from "@/components/SmallCard.vue";
-	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
-	import { getAuthHeaders } from "@/utils/authHeaders";
-	import router from "@/router/index.js";
+import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+import { getUserIdFromToken } from "../utils/token.js";
+import { ref } from "vue";
+import SmallCard from "@/components/SmallCard.vue";
+import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
+import { getAuthHeaders } from "@/utils/authHeaders";
+import router from "@/router/index.js";
 
-	const userId = getUserIdFromToken(localStorage.getItem("token"));
-	const likes = ref([]);
-	const cards = ref([]);
-	const petCrudFavorite = useFetchApiCrud(`users/${userId}/likes`);
-	const petCrud = useFetchApiCrud("pets");
-	const adoptionCrud = useFetchApiCrud("adoptions");
-	const { isLoading } = petCrudFavorite;
-	const selectedPet = ref(null);
-	const emit = defineEmits(["remove"]);
+const userId = getUserIdFromToken(localStorage.getItem("token"));
+const fullData = ref([]);
+const petCrudFavorite = useFetchApiCrud(`users/${userId}/likes`);
+const petCrud = useFetchApiCrud("pets");
+const adoptionCrud = useFetchApiCrud("adoptions");
+const { isLoading } = petCrudFavorite;
+const selectedPet = ref(null);
+const emit = defineEmits(["remove"]);
+const showVerifMessage = ref(false);
+const showVerifMessagePet = ref(null);
+const nomPet = ref("");
+const currentPage = ref(1);
+const totalPages = ref(1);
 
-	const fetchPets = async () => {
-		const { data, error } = await petCrudFavorite.readAll(getAuthHeaders());
-		if (!error) {
-			cards.value = data;
-			cards.value.reverse();
-			console.log(cards.value);
-		}
-	};
+const fetchPets = async (page = 1) => {
+	const { data, error } = await petCrudFavorite.readAll(getAuthHeaders(), { page });
+	if (!error) {
+		fullData.value = data;
+		fullData.value.pets.reverse();
+		totalPages.value = data.totalPages;
+	}
+};
 
-	fetchPets();
+const changePage = (page) => {
+	if (page > 0 && page <= totalPages.value) {
+		currentPage.value = page;
+		fetchPets(page);
+	}
+};
 
-	const openPetDetails = (pet, event) => {
-		if (!event.target.closest(".btn")) {
-			selectedPet.value = pet;
-		}
-	};
+fetchPets(currentPage.value);
 
-	const closePetDetails = () => {
-		selectedPet.value = null;
-	};
+const openPetDetails = (pet, event) => {
+	if (!event.target.closest(".btn")) {
+		selectedPet.value = pet;
+	}
+};
 
-	const removeCard = (card) => {
-		cards.value = cards.value.filter((c) => c._id !== card._id);
+const closePetDetails = () => {
+	selectedPet.value = null;
+};
 
-		deleteLike(card._id);
-	};
+const deleteLike = async () => {
+	showVerifMessage.value = false;
+	fullData.value.pets = fullData.value.pets.filter((c) => c._id !== showVerifMessagePet.value._id);
+	await petCrud.del(`${showVerifMessagePet.value._id}/like`, getAuthHeaders());
+};
 
-	const deleteLike = async (petId) => {
-		likes.value = likes.value.filter((pet) => pet._id !== petId);
-		await petCrud.del(`${petId}/like`, getAuthHeaders());
-	};
-
-	const createAdoption = async (pet) => {
-		if (pet.adoptionId === null) {
-			const newAdoption = await adoptionCrud.create({ pet_id: pet._id }, getAuthHeaders());
-			router.push({ name: "chat", params: { id: newAdoption.data._id } });
-		} else {
-			router.push({ name: "chat", params: { id: pet.adoptionId } });
-		}
-	};
+const createAdoption = async (pet) => {
+	if (pet.adoptionId === null) {
+		const newAdoption = await adoptionCrud.create({ pet_id: pet._id }, getAuthHeaders());
+		router.push({ name: "chat", params: { id: newAdoption.data._id } });
+	} else {
+		router.push({ name: "chat", params: { id: pet.adoptionId } });
+	}
+};
+const showModal = (pet) => {
+	nomPet.value = pet.nom;
+	showVerifMessagePet.value = pet;
+	showVerifMessage.value = true;
+};
+const closeModal = () => {
+	showVerifMessage.value = false;
+};
 </script>
 
 <template>
@@ -64,22 +78,39 @@
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col w-full items-center h-full overflow-scroll p-4">
-		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ cards.length }} animaux</h1>
+		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ fullData.totalLikes }} {{ fullData.totalLikes > 1 ||
+			fullData.totalLikes === 0 ? " animaux" : " animal" }} </h1>
 
 		<div class="flex flex-col md:w-1/2 w-full gap-4">
-			<SmallCard
-				v-for="(card, index) in cards"
-				:key="card._id"
-				:card="card"
-				:index="index"
-				:forSpa="false"
-				@clickFirstButton="removeCard"
-				@click="(event) => openPetDetails(card, event)"
+			<SmallCard v-for="(card, index) in fullData.pets" :key="card._id" :card="card" :index="index"
+				:forSpa="false" @clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
 				@clickChatButton="createAdoption(card)" />
+		</div>
+		<div class="flex justify-between items-center mt-4">
+			<button @click="changePage(currentPage - 1,)" :disabled="currentPage === 1" class="btn">Précédent</button>
+			<span>Page {{ currentPage }} sur {{ totalPages }}</span>
+			<button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages"
+				class="btn">Suivant</button>
 		</div>
 	</div>
 
 	<OverlayPetInfos v-if="selectedPet" :pet="selectedPet" @close="closePetDetails" />
+
+	<dialog v-show="showVerifMessage" class="modal modal-open">
+		<div class="modal-box text-center">
+			<h3 class="text-lg font-bold my-4">Voulez-vous vraiment supprimer le like pour {{ nomPet }} ?</h3>
+			<p>La suppression du like entrainera à la suppression de la discussion avec {{ nomPet }}</p>
+			<div class="modal-action">
+				<div class="btn btn-error self-center mr-5" @click="deleteLike">
+					<span>Oui, supprimer</span>
+				</div>
+				<div class="btn btn-success self-center mr-5" @click="closeModal">
+					<span>Non, annuler</span>
+				</div>
+			</div>
+		</div>
+	</dialog>
 </template>
+
 
 <style scoped></style>

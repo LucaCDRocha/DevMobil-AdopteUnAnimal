@@ -1,9 +1,11 @@
 <script setup>
-	import { ref } from "vue";
+	import { ref, setBlockTracking } from "vue";
 	import SwipeableCard from "@/components/SwipeableCard.vue";
 	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
 	import { getAuthHeaders } from "@/utils/authHeaders";
+	import { getCookie, setCookie } from "@/utils/cookies";
+	import { getCurrentPosition, positionFetched } from "@/utils/location";
 
 	const cards = ref([]);
 	const petCrud = useFetchApiCrud("pets");
@@ -24,32 +26,23 @@
 
 	const fetchPets = async () => {
 		isLoading.value = true;
-		let position = null;
-		try {
-			position = await getCurrentPosition();
-		} catch (error) {
-			console.error("Could not get position:", error);
+		let position = JSON.parse(getCookie("userPosition"));
+		if (!position && !positionFetched.value) {
+			try {
+				position = await getCurrentPosition();
+				setCookie("userPosition", JSON.stringify(position), 1);
+			} catch (error) {
+				console.error("Could not get position:", error);
+			}
 		}
 		const queryParams = {
-			...selectedTags.value.length && { tags: selectedTags.value.map((tag) => tag._id).join(",") },
-			...(position && { latitude: position.latitude, longitude: position.longitude })
+			...(selectedTags.value.length && { tags: selectedTags.value.map((tag) => tag._id).join(",") }),
+			...(position && { latitude: position.latitude, longitude: position.longitude }),
 		};
-		const { data, error } = await readAll(
-			getAuthHeaders(),
-			queryParams
-		);
+		const { data, error } = await readAll(getAuthHeaders(), queryParams);
 		if (!error) {
 			cards.value = data;
 		}
-	};
-
-	const getCurrentPosition = () => {
-		return new Promise((resolve, reject) => {
-			navigator.geolocation.getCurrentPosition(
-				(position) => resolve(position.coords),
-				(error) => reject(error)
-			);
-		});
 	};
 
 	fetchPets();
@@ -75,7 +68,6 @@
 
 			if (cardId) {
 				await swipe(cardId, direction, getAuthHeaders());
-				
 			}
 		}
 	};
@@ -142,14 +134,14 @@
 		<span v-if="selectedTags.length" class="indicator-item badge badge-accent top-2 right-2">{{
 			selectedTags.length
 		}}</span>
-		<summary tabindex="0" role="button" class="btn m-1">Filtre</summary>
+		<summary tabindex="0" role="button" class="btn m-1">Filtres</summary>
 		<ul
 			tabindex="0"
-			class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-1/2 transform -translate-x-1/2">
-			<li v-for="tag in tags" :key="tag._id">
+			class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-1/2 transform -translate-x-1/2 gap-2">
+			<li v-for="tag in tags" :key="tag._id" >
 				<div
 					@click="() => toggleTagSelection(tag)"
-					class="menu-item flex justify-between items-center btn"
+					class="menu-item flex justify-between items-center btn "
 					:class="{ 'btn-accent': selectedTags.includes(tag) }">
 					<span>{{ tag.nom }}</span>
 				</div>

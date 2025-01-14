@@ -14,7 +14,9 @@
 	const chat = ref([]);
 	const newMsg = ref("");
 	const adoptionsCrud = useFetchApiCrud(`adoptions/${id.value}`);
+	const adoptionStatus = useFetchApiCrud(`adoptions`);
 	const { isLoading } = adoptionsCrud;
+	const hasSpa = localStorage.getItem("hasSpa") === "true";
 
 	const socket = new WebSocket(import.meta.env.VITE_WS_URL);
 
@@ -57,17 +59,18 @@
 		}, 100);
 	};
 
-	const fetchChats = async () => {
+	const fetchChat = async () => {
 		const { data, error } = await adoptionsCrud.readAll({
 			Authorization: `Bearer ${localStorage.getItem("token")}`,
 		});
 		if (!error) {
 			chat.value = data;
+			console.log("chat", chat.value);
 			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
 		}
 	};
 
-	fetchChats();
+	fetchChat();
 
 	const send = async (e) => {
 		e.preventDefault();
@@ -78,6 +81,17 @@
 		};
 		socket.send(JSON.stringify({ adoptionId: id.value, message }));
 		newMsg.value = "";
+	};
+
+	const changeStatus = async (status) => {
+		try {
+			await adoptionStatus.changeStatus(id.value, status, {
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+			});
+			fetchChat();
+		} catch (error) {
+			console.error("Failed to change status", error);
+		}
 	};
 
 	onMounted(() => {
@@ -102,10 +116,30 @@
 			</button>
 			<p class="w-full text-center p-2" v-if="chat.pet_id">
 				<span class="text-lg font-bold">
-					{{ chat.pet_id.nom }}
+					{{ hasSpa ? chat.user_id.firstName + " " + chat.user_id.lastName : chat.pet_id.nom }}
 				</span>
-				<span class="text-sm"> - {{ chat.pet_id.spa_id.nom }} </span>
+				<span class="text-sm"> - {{ hasSpa ? chat.pet_id.nom : chat.pet_id.spa_id.nom }} </span>
 			</p>
+		</div>
+
+		<div class="absolute top-0 right-0 p-2 z-20" v-if="hasSpa">
+			<details class="dropdown dropdown-end">
+				<summary tabindex="0" class="btn m-1"><span class="material-symbols-outlined">edit</span> status</summary>
+				<ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 gap-2">
+					<li><button class="btn btn-success" @click="changeStatus('accepted')">Accepter</button></li>
+					<li><button class="btn btn-info" @click="changeStatus('pending')">En attente</button></li>
+					<li><button class="btn btn-error" @click="changeStatus('rejected')">Rejeter</button></li>
+				</ul>
+			</details>
+		</div>
+		<div
+			class="absolute top-0.5 left-1/2 -translate-x-1/2 p-2 z-20 badge"
+			:class="{
+				'badge-error': chat.status === 'rejected',
+				'badge-success': chat.status === 'accepted',
+				'badge-info': chat.status === 'pending',
+			}">
+			{{ chat.status === "pending" ? "En attente" : chat.status === "accepted" ? "Accepté" : "Refusé" }}
 		</div>
 
 		<div v-if="isLoading" class="flex justify-center items-center h-full w-full">
@@ -115,7 +149,10 @@
 		<div v-else class="flex flex-col w-full items-center mt-12 mb-10">
 			<div class="w-full" v-if="chat.groupedMessages">
 				<div v-for="(messages, date) in chat.groupedMessages" :key="date" class="w-full">
-					<div class="sticky w-fit top-12 left-1/2 -translate-x-1/2 bg-neutral text-center text-neutral-content px-3 py-0.5 rounded-full z-10">{{ date }}</div>
+					<div
+						class="sticky w-fit top-12 left-1/2 -translate-x-1/2 bg-neutral text-center text-neutral-content px-3 py-0.5 rounded-full z-10">
+						{{ date }}
+					</div>
 					<ChatBubble
 						v-for="(msg, index) in messages"
 						class="mb-2 z-0"
@@ -126,7 +163,9 @@
 				</div>
 			</div>
 		</div>
-		<form @submit="send" class="absolute bottom-20 translate-y-2 left-0 flex justify-center items-end w-full p-2 bg-base-100 z-20">
+		<form
+			@submit="send"
+			class="absolute bottom-20 translate-y-2 left-0 flex justify-center items-end w-full p-2 bg-base-100 z-20">
 			<input type="text" v-model="newMsg" placeholder="Votre message" class="input input-bordered w-full" />
 			<button type="submit" class="btn btn-primary ml-2">Envoyer</button>
 		</form>

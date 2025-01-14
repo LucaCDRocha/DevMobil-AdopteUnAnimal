@@ -5,14 +5,16 @@ import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   pet: Object,
+  forSpa: Boolean,
 });
 
-const emits = defineEmits(["close"]);
+const emits = defineEmits(["close", "delete"]);
 
 const currentImageIndex = ref(0);
 
 const imageSrc = computed(() => transformImageData(props.pet.images[currentImageIndex.value]));
-
+const showVerifMessage = ref(false);
+const showVerifMessagePet = ref(null);
 const nextImage = (event) => {
   event.stopPropagation();
   currentImageIndex.value =
@@ -27,6 +29,13 @@ const prevImage = (event) => {
     props.pet.images.length;
 	
 };
+
+const showModal = () => {
+		showVerifMessage.value = true;
+	};
+	const closeModal = () => {
+		showVerifMessage.value = false;
+	};
 
 </script>
 
@@ -60,7 +69,7 @@ const prevImage = (event) => {
           {{ currentImageIndex + 1 }} / {{ pet.images.length }}
         </div>
       </div>
-      <span v-for="tag in pet.tags" class="badge self-end">{{ tag.nom }}</span>
+      <span v-for="tag in pet.tags" class="badge self-end mx-1">{{ tag.nom }}</span>
       <div class="flex flex-col gap-2">
         <p class="text-lg">{{ pet.description }}</p>
         <div class="mt-4">
@@ -70,10 +79,36 @@ const prevImage = (event) => {
           <p><strong>Dislikes:</strong> {{ pet.dislikes_count }}</p>
         </div>
       </div>
+      <div  v-if="forSpa"> 
+        <div class="modal-action mt-4 sticky bottom-0 justify-center">
+        <button @click="showModal" class="btn btn-link w-1/3">
+          Supprimer l'animal
+        </button>
+      </div>
       <div class="modal-action mt-4 sticky bottom-0 justify-center">
         <button @click="$emit('close')" class="btn btn-primary w-full">
           Fermer
         </button>
+      </div>
+    </div>
+     
+      <div class="modal-action mt-4 sticky bottom-0 justify-center" v-else>
+        <button @click="$emit('close')" class="btn btn-primary w-full">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog v-show="showVerifMessage" class="modal modal-open">
+    <div class="modal-box text-center">
+      <h3 class="text-lg font-bold my-4">
+        Êtes-vous sûr de vouloir supprimer {{ pet.nom }} ?
+      </h3>
+      <p>Cette action supprimera toutes les discussions par rapport à cet animal.</p>
+      <div class="modal-action">
+        <button @click="$emit('delete')" class="btn btn-error">Oui</button>
+        <button @click="closeModal" class="btn">Non</button>
       </div>
     </div>
   </dialog>
