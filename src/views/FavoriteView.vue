@@ -1,70 +1,77 @@
 <script setup>
-	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
-	import { getUserIdFromToken } from "../utils/token.js";
-	import { ref } from "vue";
-	import SmallCard from "@/components/SmallCard.vue";
-	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
-	import { getAuthHeaders } from "@/utils/authHeaders";
-	import router from "@/router/index.js";
+import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+import { getUserIdFromToken } from "../utils/token.js";
+import { ref } from "vue";
+import SmallCard from "@/components/SmallCard.vue";
+import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
+import { getAuthHeaders } from "@/utils/authHeaders";
+import router from "@/router/index.js";
 
-	const userId = getUserIdFromToken(localStorage.getItem("token"));
-	const likes = ref([]);
-	const cards = ref([]);
-	const petCrudFavorite = useFetchApiCrud(`users/${userId}/likes`);
-	const petCrud = useFetchApiCrud("pets");
-	const adoptionCrud = useFetchApiCrud("adoptions");
-	const { isLoading } = petCrudFavorite;
-	const selectedPet = ref(null);
-	const emit = defineEmits(["remove"]);
-	const showVerifMessage = ref(false);
-	const showVerifMessagePet = ref(null);
-	const nomPet = ref("");
+const userId = getUserIdFromToken(localStorage.getItem("token"));
+const fullData = ref([]);
+const petCrudFavorite = useFetchApiCrud(`users/${userId}/likes`);
+const petCrud = useFetchApiCrud("pets");
+const adoptionCrud = useFetchApiCrud("adoptions");
+const { isLoading } = petCrudFavorite;
+const selectedPet = ref(null);
+const emit = defineEmits(["remove"]);
+const showVerifMessage = ref(false);
+const showVerifMessagePet = ref(null);
+const nomPet = ref("");
+const currentPage = ref(1);
+const totalPages = ref(1);
 
-	const fetchPets = async () => {
-		const { data, error } = await petCrudFavorite.readAll(getAuthHeaders());
-		if (!error) {
-			cards.value = data;
-			cards.value.reverse();
-			console.log(cards.value);
-		}
-	};
+const fetchPets = async (page = 1) => {
+	const { data, error } = await petCrudFavorite.readAll(getAuthHeaders(), { page });
+	if (!error) {
+		fullData.value = data;
+		fullData.value.pets.reverse();
+		totalPages.value = data.totalPages;
+	}
+};
 
-	fetchPets();
+const changePage = (page) => {
+	if (page > 0 && page <= totalPages.value) {
+		currentPage.value = page;
+		fetchPets(page);
+	}
+};
 
-	const openPetDetails = (pet, event) => {
-		if (!event.target.closest(".btn")) {
-			selectedPet.value = pet;
-		}
-	};
+fetchPets(currentPage.value);
 
-	const closePetDetails = () => {
-		selectedPet.value = null;
-	};
+const openPetDetails = (pet, event) => {
+	if (!event.target.closest(".btn")) {
+		selectedPet.value = pet;
+	}
+};
 
-	const deleteLike = async () => {
-		showVerifMessage.value = false;
-		cards.value = cards.value.filter((c) => c._id !== showVerifMessagePet.value._id);
-		likes.value = likes.value.filter((pet) => pet._id !== showVerifMessagePet.value._id);
-		await petCrud.del(`${showVerifMessagePet.value._id}/like`, getAuthHeaders());
-	};
+const closePetDetails = () => {
+	selectedPet.value = null;
+};
 
-	const createAdoption = async (pet) => {
-		if (pet.adoptionId === null) {
-			const newAdoption = await adoptionCrud.create({ pet_id: pet._id }, getAuthHeaders());
-			router.push({ name: "chat", params: { id: newAdoption.data._id } });
-		} else {
-			router.push({ name: "chat", params: { id: pet.adoptionId } });
-		}
-	};
-	const showModal = (pet) => {
-		console.log(pet);
-		nomPet.value = pet.nom;
-		showVerifMessagePet.value = pet;
-		showVerifMessage.value = true;
-	};
-	const closeModal = () => {
-		showVerifMessage.value = false;
-	};
+const deleteLike = async () => {
+	showVerifMessage.value = false;
+	fullData.value.pets = fullData.value.pets.filter((c) => c._id !== showVerifMessagePet.value._id);
+	await petCrud.del(`${showVerifMessagePet.value._id}/like`, getAuthHeaders());
+};
+
+const createAdoption = async (pet) => {
+	if (pet.adoptionId === null) {
+		const newAdoption = await adoptionCrud.create({ pet_id: pet._id }, getAuthHeaders());
+		router.push({ name: "chat", params: { id: newAdoption.data._id } });
+	} else {
+		router.push({ name: "chat", params: { id: pet.adoptionId } });
+	}
+};
+const showModal = (pet) => {
+	console.log(pet);
+	nomPet.value = pet.nom;
+	showVerifMessagePet.value = pet;
+	showVerifMessage.value = true;
+};
+const closeModal = () => {
+	showVerifMessage.value = false;
+};
 </script>
 
 <template>
@@ -72,18 +79,19 @@
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col w-full items-center h-full overflow-scroll p-4">
-		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ cards.length }} {{cards.length >1 || cards.length ===0 ? " animaux":" animal"}} </h1>
+		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ fullData.totalLikes }} {{ fullData.totalLikes > 1 ||
+			fullData.totalLikes === 0 ? " animaux" : " animal" }} </h1>
 
 		<div class="flex flex-col md:w-1/2 w-full gap-4">
-			<SmallCard
-				v-for="(card, index) in cards"
-				:key="card._id"
-				:card="card"
-				:index="index"
-				:forSpa="false"
-				@clickFirstButton="showModal(card)"
-				@click="(event) => openPetDetails(card, event)"
+			<SmallCard v-for="(card, index) in fullData.pets" :key="card._id" :card="card" :index="index"
+				:forSpa="false" @clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
 				@clickChatButton="createAdoption(card)" />
+		</div>
+		<div class="flex justify-between items-center mt-4">
+			<button @click="changePage(currentPage - 1,)" :disabled="currentPage === 1" class="btn">Précédent</button>
+			<span>Page {{ currentPage }} sur {{ totalPages }}</span>
+			<button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages"
+				class="btn">Suivant</button>
 		</div>
 	</div>
 
