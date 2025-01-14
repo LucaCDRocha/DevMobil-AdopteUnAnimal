@@ -10,7 +10,6 @@ const initializeApp = async () => {
 	const userPosition = JSON.parse(getCookie("userPosition"));
 	if (!positionFetched.value && !userPosition) {
 		try {
-			console.log("getCurrentPosition");
 			const position = await getCurrentPosition();
 			setCookie("userPosition", JSON.stringify(position), 1);
 		} catch (error) {
@@ -23,6 +22,6 @@ const app = createApp(App);
 
 app.use(router);
 
-app.mount("#app");
-
 initializeApp();
+
+app.mount("#app");

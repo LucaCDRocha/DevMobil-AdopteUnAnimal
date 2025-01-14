@@ -1,5 +1,5 @@
 <script setup>
-	import { ref } from "vue";
+	import { ref, setBlockTracking } from "vue";
 	import SwipeableCard from "@/components/SwipeableCard.vue";
 	import OverlayPetInfos from "@/components/OverlayPetInfos.vue";
 	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
@@ -29,7 +29,6 @@
 		let position = JSON.parse(getCookie("userPosition"));
 		if (!position && !positionFetched.value) {
 			try {
-				console.log("getCurrentPosition");
 				position = await getCurrentPosition();
 				setCookie("userPosition", JSON.stringify(position), 1);
 			} catch (error) {
