@@ -29,8 +29,8 @@ const fetchPets = async (page = 1, pageSize = 3) => {
 		cards.value = data;
 		cards.value.reverse();
 		console.log(resHeaders);
-		totalLikes.value = resHeaders["pagination-total-likes"];
-		totalPages.value = resHeaders["pagination-total-pages"];
+		totalLikes.value = parseInt(resHeaders["pagination-total-likes"]);
+		totalPages.value = parseInt(resHeaders["pagination-total-pages"]);
 	}
 };
 
