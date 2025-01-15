@@ -28,7 +28,7 @@ const fetchPets = async (page = 1, pageSize = 3) => {
 	if (!error) {
 		cards.value = data;
 		cards.value.reverse();
-		console.log(resHeaders);
+		console.log(data);
 		totalLikes.value = parseInt(resHeaders["pagination-total-likes"]);
 		totalPages.value = parseInt(resHeaders["pagination-total-pages"]);
 	}
@@ -60,7 +60,7 @@ const deleteLike = async () => {
 };
 
 const createAdoption = async (pet) => {
-	if (pet.adoptionId === null) {
+	if (!pet.adoptionId) {
 		const newAdoption = await adoptionCrud.create({ pet_id: pet._id }, getAuthHeaders());
 		router.push({ name: "chat", params: { id: newAdoption.data._id } });
 	} else {
