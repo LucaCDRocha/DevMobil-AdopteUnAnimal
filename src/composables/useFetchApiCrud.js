@@ -25,8 +25,14 @@ export function useFetchApiCrud(resource) {
 				},
 			});
 			handleUnauthorized(response);
+			// Extract headers
+			const resHeaders = {};
+			response.headers.forEach((value, key) => {
+				resHeaders[key] = value;
+			});
+
 			const data = await response.json();
-			return { data, error: !response.ok };
+			return { data, error: !response.ok, resHeaders };
 		} catch (error) {
 			return { data: null, error: true };
 		} finally {
