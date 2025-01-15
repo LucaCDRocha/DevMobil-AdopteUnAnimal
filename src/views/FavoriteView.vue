@@ -8,7 +8,7 @@ import { getAuthHeaders } from "@/utils/authHeaders";
 import router from "@/router/index.js";
 
 const userId = getUserIdFromToken(localStorage.getItem("token"));
-const fullData = ref([]);
+const cards = ref([]);
 const petCrudFavorite = useFetchApiCrud(`users/${userId}/likes`);
 const petCrud = useFetchApiCrud("pets");
 const adoptionCrud = useFetchApiCrud("adoptions");
@@ -18,22 +18,26 @@ const emit = defineEmits(["remove"]);
 const showVerifMessage = ref(false);
 const showVerifMessagePet = ref(null);
 const nomPet = ref("");
+
 const currentPage = ref(1);
 const totalPages = ref(1);
+const totalLikes = ref(0);
 
-const fetchPets = async (page = 1) => {
-	const { data, error } = await petCrudFavorite.readAll(getAuthHeaders(), { page });
+const fetchPets = async (page = 1, pageSize = 3) => {
+	const { data, error, resHeaders } = await petCrudFavorite.readAll(getAuthHeaders(), { page, pageSize });
 	if (!error) {
-		fullData.value = data;
-		fullData.value.pets.reverse();
-		totalPages.value = data.totalPages;
+		cards.value = data;
+		cards.value.reverse();
+		console.log(resHeaders);
+		totalLikes.value = resHeaders["pagination-total-likes"];
+		totalPages.value = resHeaders["pagination-total-pages"];
 	}
 };
 
-const changePage = (page) => {
+const changePage = (page, pageSize = 3) => {
 	if (page > 0 && page <= totalPages.value) {
 		currentPage.value = page;
-		fetchPets(page);
+		fetchPets(page, pageSize);
 	}
 };
 
@@ -51,7 +55,7 @@ const closePetDetails = () => {
 
 const deleteLike = async () => {
 	showVerifMessage.value = false;
-	fullData.value.pets = fullData.value.pets.filter((c) => c._id !== showVerifMessagePet.value._id);
+	cards.value = cards.value.filter((c) => c._id !== showVerifMessagePet.value._id);
 	await petCrud.del(`${showVerifMessagePet.value._id}/like`, getAuthHeaders());
 };
 
@@ -78,11 +82,11 @@ const closeModal = () => {
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col w-full items-center h-full overflow-scroll p-4">
-		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ fullData.totalLikes }} {{ fullData.totalLikes > 1 ||
-			fullData.totalLikes === 0 ? " animaux" : " animal" }} </h1>
+		<h1 class="text-2xl font-bold text-center my-4">Vous aimez {{ totalLikes }} {{ totalLikes > 1 ||
+			totalLikes === 0 ? " animaux" : " animal" }} </h1>
 
 		<div class="flex flex-col md:w-1/2 w-full gap-4">
-			<SmallCard v-for="(card, index) in fullData.pets" :key="card._id" :card="card" :index="index"
+			<SmallCard v-for="(card, index) in cards" :key="card._id" :card="card" :index="index"
 				:forSpa="false" @clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
 				@clickChatButton="createAdoption(card)" />
 		</div>
