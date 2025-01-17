@@ -7,6 +7,8 @@
 		forSpa: Boolean,
 	});
 
+	console.log(props.card.spa_id);
+
 	const emit = defineEmits(["clickFirstButton", "clickChatButton"]);
 
 	const handleClickFirstButton = () => {
