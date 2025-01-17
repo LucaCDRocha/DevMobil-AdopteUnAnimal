@@ -57,6 +57,13 @@ const deleteLike = async () => {
 	showVerifMessage.value = false;
 	cards.value = cards.value.filter((c) => c._id !== showVerifMessagePet.value._id);
 	await petCrud.del(`${showVerifMessagePet.value._id}/like`, getAuthHeaders());
+	totalLikes.value -= 1;
+	totalPages.value = Math.ceil(totalLikes.value / pageSize);
+	if (cards.value.length === 0 && currentPage.value > 1) {
+		changePage(currentPage.value - 1);
+	} else {
+		fetchPets(currentPage.value);
+	}
 };
 
 const createAdoption = async (pet) => {
