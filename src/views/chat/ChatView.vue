@@ -92,8 +92,6 @@
 		e.preventDefault();
 		const message = {
 			content: newMsg.value,
-			user_id: userId,
-			date: new Date(),
 		};
 		try {
 			await messagesCrud.create(message, {
