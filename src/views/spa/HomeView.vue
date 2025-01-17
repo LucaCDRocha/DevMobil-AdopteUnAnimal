@@ -97,7 +97,7 @@
 	<!-- Success Modal -->
 	<dialog v-show="showDiscussions" class="modal modal-open">
 		<div class="modal-box text-center">
-			<h3 class="text-lg font-bold my-4" v-if="adoptions.length === 0">Il y aucune discussion pour {{ nomPet }}</h3>
+			<h3 class="text-lg font-bold my-4" v-if="adoptions.length === 0">Il y a aucune discussion pour {{ nomPet }}</h3>
 			<h3 class="text-lg font-bold my-4" v-else>
 				Il y a {{ adoptions.length }} discussion{{ adoptions.length > 1 ? 's' : '' }} pour {{ nomPet }} :
 			</h3>
