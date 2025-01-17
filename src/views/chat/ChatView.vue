@@ -1,136 +1,136 @@
 <script setup>
-import { useRoute } from "vue-router";
-import { onMounted, onUnmounted, ref } from "vue";
-import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
-import { getUserIdFromToken } from "../../utils/token.js";
-import ChatBubble from "@/components/ChatBubble.vue";
+	import { useRoute } from "vue-router";
+	import { onMounted, onUnmounted, ref } from "vue";
+	import { useFetchApiCrud } from "@/composables/useFetchApiCrud";
+	import { getUserIdFromToken } from "../../utils/token.js";
+	import ChatBubble from "@/components/ChatBubble.vue";
 
-const id = ref(null);
-const route = useRoute();
-// id de l'adoption
-id.value = route.params.id;
+	const id = ref(null);
+	const route = useRoute();
+	// id de l'adoption
+	id.value = route.params.id;
 
-const userId = getUserIdFromToken(localStorage.getItem("token"));
-const chat = ref([]);
-const newMsg = ref("");
-const adoptionsCrud = useFetchApiCrud(`adoptions/${id.value}`);
-const messagesCrud = useFetchApiCrud(`adoptions/${id.value}/messages`);
-const adoptionStatus = useFetchApiCrud(`adoptions`);
-const { isLoading } = adoptionsCrud;
-const hasSpa = localStorage.getItem("hasSpa") === "true";
+	const userId = getUserIdFromToken(localStorage.getItem("token"));
+	const chat = ref([]);
+	const newMsg = ref("");
+	const adoptionsCrud = useFetchApiCrud(`adoptions/${id.value}`);
+	const messagesCrud = useFetchApiCrud(`adoptions/${id.value}/messages`);
+	const adoptionStatus = useFetchApiCrud(`adoptions`);
+	const { isLoading } = adoptionsCrud;
+	const hasSpa = localStorage.getItem("hasSpa") === "true";
 
-const socket = new WebSocket(import.meta.env.VITE_WS_URL);
+	const socket = new WebSocket(import.meta.env.VITE_WS_URL);
 
-socket.onopen = () => {
-	console.log("Connected to WebSocket server");
-	socket.send(
-		JSON.stringify({ type: "authenticate", userId, adoptionId: id.value, token: localStorage.getItem("token") })
-	);
-};
-
-const formatDate = (dateString) => {
-	const date = new Date(dateString);
-	const today = new Date();
-	if (date.toDateString() === today.toDateString()) {
-		return "Aujourd'hui";
-	}
-	return date.toLocaleDateString();
-};
-
-const groupMessagesByDate = (messages) => {
-	return messages.reduce((acc, message) => {
-		const date = formatDate(message.date);
-		if (!acc[date]) {
-			acc[date] = [];
-		}
-		acc[date].push(message);
-		return acc;
-	}, {});
-};
-
-socket.onmessage = (event) => {
-	const message = JSON.parse(event.data);
-	const type = message.type;
-	const data = message.data;
-
-	switch (type) {
-		case "statusUpdate":
-			chat.value.status = data;
-			break;
-		case "addMessage":
-			chat.value.messages.push(data);
-			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
-			break;
-		default:
-			break;
-	}
-
-	// scroll to bottom
-	const chatContainer = document.querySelector(".chat-container");
-	setTimeout(() => {
-		chatContainer.scrollTo({
-			top: chatContainer.scrollHeight,
-			behavior: "smooth",
-		});
-	}, 100);
-};
-
-const fetchChat = async () => {
-	const { data, error } = await adoptionsCrud.readAll({
-		Authorization: `Bearer ${localStorage.getItem("token")}`,
-	});
-	if (!error) {
-		chat.value = data;
-		console.log("chat", chat.value);
-		chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
-	}
-};
-
-fetchChat();
-
-const sendMessage = async (e) => {
-	e.preventDefault();
-	if (!newMsg.value.trim()) {
-		console.warn("Message vide non envoyé");
-		return;
-	}
-	const message = {
-		content: newMsg.value,
+	socket.onopen = () => {
+		console.log("Connected to WebSocket server");
+		socket.send(
+			JSON.stringify({ type: "authenticate", userId, adoptionId: id.value, token: localStorage.getItem("token") })
+		);
 	};
-	try {
-		await messagesCrud.create(message, {
+
+	const formatDate = (dateString) => {
+		const date = new Date(dateString);
+		const today = new Date();
+		if (date.toDateString() === today.toDateString()) {
+			return "Aujourd'hui";
+		}
+		return date.toLocaleDateString();
+	};
+
+	const groupMessagesByDate = (messages) => {
+		return messages.reduce((acc, message) => {
+			const date = formatDate(message.date);
+			if (!acc[date]) {
+				acc[date] = [];
+			}
+			acc[date].push(message);
+			return acc;
+		}, {});
+	};
+
+	socket.onmessage = (event) => {
+		const message = JSON.parse(event.data);
+		const type = message.type;
+		const data = message.data;
+
+		switch (type) {
+			case "statusUpdate":
+				chat.value.status = data;
+				break;
+			case "addMessage":
+				chat.value.messages.push(data);
+				chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
+				break;
+			default:
+				break;
+		}
+
+		// scroll to bottom
+		const chatContainer = document.querySelector(".chat-container");
+		setTimeout(() => {
+			chatContainer.scrollTo({
+				top: chatContainer.scrollHeight,
+				behavior: "smooth",
+			});
+		}, 100);
+	};
+
+	const fetchChat = async () => {
+		const { data, error } = await adoptionsCrud.readAll({
 			Authorization: `Bearer ${localStorage.getItem("token")}`,
 		});
-		newMsg.value = "";
-	} catch (error) {
-		console.error("Failed to send message", error);
-	}
-};
+		if (!error) {
+			chat.value = data;
+			console.log("chat", chat.value);
+			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
+		}
+	};
 
-const changeStatus = async (status) => {
-	try {
-		await adoptionStatus.changeStatus(id.value, status, {
-			Authorization: `Bearer ${localStorage.getItem("token")}`,
-		});
-		// socket.send(JSON.stringify({ type: "statusUpdate", adoptionId: id.value, status }));
-	} catch (error) {
-		console.error("Failed to change status", error);
-	}
-};
+	fetchChat();
 
-onMounted(() => {
-	const chatContainer = document.querySelector(".chat-container");
-	setTimeout(() => {
-		chatContainer.scrollTo({
-			top: chatContainer.scrollHeight,
-			behavior: "smooth",
-		});
-	}, 1000);
-});
+	const sendMessage = async (e) => {
+		e.preventDefault();
+		if (!newMsg.value.trim()) {
+			console.warn("Message vide non envoyé");
+			return;
+		}
+		const message = {
+			content: newMsg.value,
+		};
+		try {
+			await messagesCrud.create(message, {
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+			});
+			newMsg.value = "";
+		} catch (error) {
+			console.error("Failed to send message", error);
+		}
+	};
 
-onUnmounted(() => {
-	socket.close();
-});
+	const changeStatus = async (status) => {
+		try {
+			await adoptionStatus.changeStatus(id.value, status, {
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+			});
+			// socket.send(JSON.stringify({ type: "statusUpdate", adoptionId: id.value, status }));
+		} catch (error) {
+			console.error("Failed to change status", error);
+		}
+	};
+
+	onMounted(() => {
+		const chatContainer = document.querySelector(".chat-container");
+		setTimeout(() => {
+			chatContainer.scrollTo({
+				top: chatContainer.scrollHeight,
+				behavior: "smooth",
+			});
+		}, 1000);
+	});
+
+	onUnmounted(() => {
+		socket.close();
+	});
 </script>
 <template>
 	<div class="chat-container flex flex-col w-full items-start h-full overflow-scroll p-4">
@@ -159,12 +159,19 @@ onUnmounted(() => {
 		<div
 			class="absolute top-0.5 left-1/2 -translate-x-1/2 p-2 z-20 badge"
 			:class="{
-				'badge-error': chat.status === 'rejected',
+				'badge-error': chat.status === 'rejected' || chat.status === 'unavailable',
 				'badge-success': chat.status === 'accepted',
 				'badge-info': chat.status === 'pending',
-				'badge-error': chat.status === 'unavailable',
 			}">
-			{{ chat.status === "pending" ? "En attente" : chat.status === "accepted" ? "Accepté" : chat.status === "rejected" ? "Refusé" : "Indisponible" }}
+			{{
+				chat.status === "pending"
+					? "En attente"
+					: chat.status === "accepted"
+					? "Accepté"
+					: chat.status === "rejected"
+					? "Refusé"
+					: "Indisponible"
+			}}
 		</div>
 
 		<div v-if="isLoading" class="flex justify-center items-center h-full w-full">
@@ -178,12 +185,18 @@ onUnmounted(() => {
 						class="sticky w-fit top-12 left-1/2 -translate-x-1/2 bg-neutral text-center text-neutral-content px-3 py-0.5 rounded-full z-10">
 						{{ date }}
 					</div>
-					<ChatBubble v-for="(msg, index) in messages" class="mb-2 z-0" :key="msg._id" :message="msg"
-						:index="index" :isMe="msg.user_id === userId" />
+					<ChatBubble
+						v-for="(msg, index) in messages"
+						class="mb-2 z-0"
+						:key="msg._id"
+						:message="msg"
+						:index="index"
+						:isMe="msg.user_id === userId" />
 				</div>
 			</div>
 		</div>
-		<form @submit="sendMessage"
+		<form
+			@submit="sendMessage"
 			class="absolute bottom-20 translate-y-2 left-0 flex justify-center items-end w-full p-2 bg-base-100 z-20">
 			<input type="text" v-model="newMsg" placeholder="Votre message" class="input input-bordered w-full" />
 			<button type="submit" class="btn btn-primary ml-2">Envoyer</button>

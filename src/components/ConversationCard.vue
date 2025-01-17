@@ -10,6 +10,8 @@
 		forSpa: Boolean,
 	});
 
+	console.log(props.card.status);
+
 	const imageSrc = computed(() => transformImageData(props.card.pet_id.images[0]));
 </script>
 
@@ -36,12 +38,19 @@
 		<span
 			class="indicator-item indicator-start left-10 indicator-bottom badge"
 			:class="{
-				'badge-error': card.status === 'rejected',
-				'badge-success': card.status === 'accepted',
 				'badge-info': card.status === 'pending',
-				'badge-error': card.status === 'unavailable',
+				'badge-error': card.status === 'rejected' || card.status === 'unavailable',
+				'badge-success': card.status === 'accepted',
 			}"
-			>{{ card.status === "pending" ? "En attente" : card.status === "accepted" ? "Accepté" : card.status === "rejected" ? "Refusé" : "Indisponible" }}
+			>{{
+				card.status === "pending"
+					? "En attente"
+					: card.status === "accepted"
+					? "Accepté"
+					: card.status === "rejected"
+					? "Refusé"
+					: "Indisponible"
+			}}
 		</span>
 	</RouterLink>
 	<div class="divider"></div>

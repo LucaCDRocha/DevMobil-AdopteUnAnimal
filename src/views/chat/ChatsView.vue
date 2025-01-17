@@ -63,6 +63,12 @@
 				class="btn mx-2">
 				Refusé
 			</button>
+			<button
+				@click="setFilter('unavailable')"
+				:class="{ 'btn-primary': filterStatus === 'unavailable' }"
+				class="btn mx-2">
+				Indisponible
+			</button>
 		</div>
 
 		<div v-if="filteredCards.length === 0" class="text-center text-base-300">
