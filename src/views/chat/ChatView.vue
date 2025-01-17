@@ -14,6 +14,7 @@
 	const chat = ref([]);
 	const newMsg = ref("");
 	const adoptionsCrud = useFetchApiCrud(`adoptions/${id.value}`);
+	const messagesCrud = useFetchApiCrud(`adoptions/${id.value}/messages`);
 	const adoptionStatus = useFetchApiCrud(`adoptions`);
 	const { isLoading } = adoptionsCrud;
 	const hasSpa = localStorage.getItem("hasSpa") === "true";
@@ -49,12 +50,21 @@
 
 	socket.onmessage = (event) => {
 		const message = JSON.parse(event.data);
-		if (message.type === "statusUpdate") {
-			chat.value.status = message.status;
-		} else if (message.type === "addMessage") {
-			chat.value.messages.push(message);
-			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
+		const type = message.type;
+		const data = message.data;
+
+		switch (type) {
+			case "statusUpdate":
+				chat.value.status = data;
+				break;
+			case "addMessage":
+				chat.value.messages.push(data);
+				chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
+				break;
+			default:
+				break;
 		}
+
 		// scroll to bottom
 		const chatContainer = document.querySelector(".chat-container");
 		setTimeout(() => {
@@ -85,8 +95,14 @@
 			user_id: userId,
 			date: new Date(),
 		};
-		socket.send(JSON.stringify({ type: "addMessage", adoptionId: id.value, message }));
-		newMsg.value = "";
+		try {
+			await messagesCrud.create(message, {
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+			});
+			newMsg.value = "";
+		} catch (error) {
+			console.error("Failed to send message", error);
+		}
 	};
 
 	const changeStatus = async (status) => {
@@ -94,7 +110,7 @@
 			await adoptionStatus.changeStatus(id.value, status, {
 				Authorization: `Bearer ${localStorage.getItem("token")}`,
 			});
-			socket.send(JSON.stringify({ type: "statusUpdate", adoptionId: id.value, status }));
+			// socket.send(JSON.stringify({ type: "statusUpdate", adoptionId: id.value, status }));
 		} catch (error) {
 			console.error("Failed to change status", error);
 		}
