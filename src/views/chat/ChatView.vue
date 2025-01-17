@@ -22,7 +22,9 @@
 
 	socket.onopen = () => {
 		console.log("Connected to WebSocket server");
-		socket.send(JSON.stringify({ type: "authenticate", userId, adoptionId: id.value }));
+		socket.send(
+			JSON.stringify({ type: "authenticate", userId, adoptionId: id.value, token: localStorage.getItem("token") })
+		);
 	};
 
 	const formatDate = (dateString) => {
