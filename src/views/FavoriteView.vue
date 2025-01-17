@@ -22,7 +22,7 @@ const nomPet = ref("");
 const currentPage = ref(1);
 const totalPages = ref(1);
 const totalLikes = ref(0);
-const pageSize = 5;
+const pageSize = 4;
 
 const fetchPets = async (page = 1) => {
 	const { data, error, resHeaders } = await petCrudFavorite.readAll(getAuthHeaders(), { page, pageSize });
@@ -37,7 +37,7 @@ const fetchPets = async (page = 1) => {
 const changePage = (page) => {
 	if (page > 0 && page <= totalPages.value) {
 		currentPage.value = page;
-		fetchPets(page, pageSize);
+		fetchPets(page);
 	}
 };
 
