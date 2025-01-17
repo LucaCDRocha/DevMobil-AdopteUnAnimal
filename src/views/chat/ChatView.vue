@@ -49,8 +49,12 @@
 
 	socket.onmessage = (event) => {
 		const message = JSON.parse(event.data);
-		chat.value.messages.push(message);
-		chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
+		if (message.type === "statusUpdate") {
+			chat.value.status = message.status;
+		} else if (message.type === "addMessage") {
+			chat.value.messages.push(message);
+			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
+		}
 		// scroll to bottom
 		const chatContainer = document.querySelector(".chat-container");
 		setTimeout(() => {
@@ -74,14 +78,14 @@
 
 	fetchChat();
 
-	const send = async (e) => {
+	const sendMessage = async (e) => {
 		e.preventDefault();
 		const message = {
 			content: newMsg.value,
 			user_id: userId,
 			date: new Date(),
 		};
-		socket.send(JSON.stringify({ adoptionId: id.value, message }));
+		socket.send(JSON.stringify({ type: "addMessage", adoptionId: id.value, message }));
 		newMsg.value = "";
 	};
 
@@ -90,7 +94,7 @@
 			await adoptionStatus.changeStatus(id.value, status, {
 				Authorization: `Bearer ${localStorage.getItem("token")}`,
 			});
-			fetchChat();
+			socket.send(JSON.stringify({ type: "statusUpdate", adoptionId: id.value, status }));
 		} catch (error) {
 			console.error("Failed to change status", error);
 		}
@@ -166,7 +170,7 @@
 			</div>
 		</div>
 		<form
-			@submit="send"
+			@submit="sendMessage"
 			class="absolute bottom-20 translate-y-2 left-0 flex justify-center items-end w-full p-2 bg-base-100 z-20">
 			<input type="text" v-model="newMsg" placeholder="Votre message" class="input input-bordered w-full" />
 			<button type="submit" class="btn btn-primary ml-2">Envoyer</button>
