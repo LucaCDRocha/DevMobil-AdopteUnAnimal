@@ -129,7 +129,7 @@
 		</div>
 
 		<div class="absolute top-0 right-0 p-2 z-20" v-if="hasSpa">
-			<details class="dropdown dropdown-end">
+			<details class="dropdown dropdown-end" v-if="chat.status !== 'unavailable'">
 				<summary tabindex="0" class="btn m-1"><span class="material-symbols-outlined">edit</span> status</summary>
 				<ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 gap-2">
 					<li><button class="btn btn-success" @click="changeStatus('accepted')">Accepter</button></li>
@@ -144,8 +144,9 @@
 				'badge-error': chat.status === 'rejected',
 				'badge-success': chat.status === 'accepted',
 				'badge-info': chat.status === 'pending',
+				'badge-error': chat.status === 'unavailable',
 			}">
-			{{ chat.status === "pending" ? "En attente" : chat.status === "accepted" ? "Accepté" : "Refusé" }}
+			{{ chat.status === "pending" ? "En attente" : chat.status === "accepted" ? "Accepté" : chat.status === "rejected" ? "Refusé" : "Indisponible" }}
 		</div>
 
 		<div v-if="isLoading" class="flex justify-center items-center h-full w-full">

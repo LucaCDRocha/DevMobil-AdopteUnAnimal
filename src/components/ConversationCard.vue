@@ -39,8 +39,9 @@
 				'badge-error': card.status === 'rejected',
 				'badge-success': card.status === 'accepted',
 				'badge-info': card.status === 'pending',
+				'badge-error': card.status === 'unavailable',
 			}"
-			>{{ card.status === "pending" ? "En attente" : card.status === "accepted" ? "Accepté" : "Refusé" }}
+			>{{ card.status === "pending" ? "En attente" : card.status === "accepted" ? "Accepté" : card.status === "rejected" ? "Refusé" : "Indisponible" }}
 		</span>
 	</RouterLink>
 	<div class="divider"></div>
