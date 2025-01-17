@@ -113,7 +113,7 @@
 		<div class="modal-box text-center">
 			<h3 class="text-lg font-bold my-4">Voulez-vous vraiment supprimer le like pour {{ nomPet }} ?</h3>
 			<p>
-				La suppression du like entrainera à la suppression de la discussion avec
+				La suppression du like entrainera la suppression de la discussion avec
 				{{ nomPet }}
 			</p>
 			<div class="modal-action">

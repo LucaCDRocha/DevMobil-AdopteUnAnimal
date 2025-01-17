@@ -22,22 +22,22 @@ const nomPet = ref("");
 const currentPage = ref(1);
 const totalPages = ref(1);
 const totalLikes = ref(0);
+const pageSize = 4;
 
-const fetchPets = async (page = 1, pageSize = 3) => {
+const fetchPets = async (page = 1) => {
 	const { data, error, resHeaders } = await petCrudFavorite.readAll(getAuthHeaders(), { page, pageSize });
 	if (!error) {
 		cards.value = data;
 		cards.value.reverse();
-		console.log(resHeaders);
 		totalLikes.value = parseInt(resHeaders["pagination-total-likes"]);
 		totalPages.value = parseInt(resHeaders["pagination-total-pages"]);
 	}
 };
 
-const changePage = (page, pageSize = 3) => {
+const changePage = (page) => {
 	if (page > 0 && page <= totalPages.value) {
 		currentPage.value = page;
-		fetchPets(page, pageSize);
+		fetchPets(page);
 	}
 };
 
@@ -60,7 +60,7 @@ const deleteLike = async () => {
 };
 
 const createAdoption = async (pet) => {
-	if (pet.adoptionId === null) {
+	if (!pet.adoptionId) {
 		const newAdoption = await adoptionCrud.create({ pet_id: pet._id }, getAuthHeaders());
 		router.push({ name: "chat", params: { id: newAdoption.data._id } });
 	} else {
@@ -90,7 +90,7 @@ const closeModal = () => {
 				:forSpa="false" @clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
 				@clickChatButton="createAdoption(card)" />
 		</div>
-		<div v-if="totalPages > 1" class="flex justify-between items-center mt-4">
+		<div v-if="totalPages > 1" class="flex justify-between items-center mt-4 absolute bottom-24">
 			<button @click="changePage(currentPage - 1,)" :disabled="currentPage === 1" class="btn">Précédent</button>
 			<span class="m-4">Page {{ currentPage }} sur {{ totalPages }}</span>
 			<button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages"
