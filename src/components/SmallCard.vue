@@ -7,6 +7,8 @@
 		forSpa: Boolean,
 	});
 
+	console.log(props.card.spa_id);
+
 	const emit = defineEmits(["clickFirstButton", "clickChatButton"]);
 
 	const handleClickFirstButton = () => {
@@ -26,7 +28,7 @@
 		</figure>
 		<div class="card-body p-3">
 			<h2 class="card-title text-lg font-bold">{{ card.nom }}</h2>
-			<p class="text-sm">{{ card.spa_id[0].nom }}</p>
+			<p class="text-sm">{{ card.spa_id.nom }}</p>
 		</div>
 		<div class="btn btn-error self-center mr-5" @click="handleClickFirstButton">
 			<span class="material-symbols-outlined fill align-middle">{{ forSpa ? "edit" : "heart_broken" }}</span>
