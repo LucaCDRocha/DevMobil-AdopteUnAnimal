@@ -82,6 +82,7 @@ const showModal = (pet) => {
 const closeModal = () => {
 	showVerifMessage.value = false;
 };
+
 </script>
 
 <template>
@@ -93,8 +94,8 @@ const closeModal = () => {
 			totalLikes === 0 ? " animaux" : " animal" }} </h1>
 
 		<div class="flex flex-col md:w-1/2 w-full gap-4">
-			<SmallCard v-for="(card, index) in cards" :key="card._id" :card="card" :index="index"
-				:forSpa="false" @clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
+			<SmallCard v-for="(card, index) in cards" :key="card._id" :card="card" :index="index" :forSpa="false"
+				@clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
 				@clickChatButton="createAdoption(card)" />
 		</div>
 		<div v-if="totalPages > 1" class="flex justify-between items-center mt-4 absolute bottom-24">
