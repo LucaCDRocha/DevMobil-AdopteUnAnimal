@@ -11,15 +11,26 @@
 	const showModalError = ref(false);
 	const errorMessage = ref("");
 
-	const userCrud = useFetchApiCrud('users');
+	const token = localStorage.getItem("token");
+	const userId = getUserIdFromToken(token);
+
+	const userCrud = useFetchApiCrud("users");
+	const spaCrud = useFetchApiCrud(`users/${userId}/spa`);
 
 	const hasSpa = localStorage.getItem("hasSpa") === "true";
 
 	const fetchUserInfo = async () => {
-		const token = localStorage.getItem("token");
-		const userId = getUserIdFromToken(token);
-
 		const { data, error } = await userCrud.read(userId, getAuthHeaders());
+
+		if (hasSpa) {
+			const { data: spaData, error: spaError } = await spaCrud.readAll(getAuthHeaders());
+			if (spaError) {
+				errorMessage.value = "Failed to fetch SPA info";
+				showModalError.value = true;
+			} else {
+				data.spa = spaData;
+			}
+		}
 
 		if (error) {
 			errorMessage.value = "Failed to fetch user info";
@@ -45,6 +56,10 @@
 
 	const goToHistory = () => {
 		router.push({ name: "history" });
+	};
+
+	const goToEditSpa = () => {
+		router.push({ name: "editSpa", params: { id: userInfo.value.spa._id } });
 	};
 
 	const showModalDelete = ref(false);
@@ -100,6 +115,9 @@
 					<button @click="goToHistory" class="btn btn-outline btn-primary w-full">
 						Historique des likes et dislikes
 					</button>
+				</div>
+				<div class="form-control mt-2" v-if="hasSpa">
+					<button @click="goToEditSpa" class="btn btn-outline btn-primary w-full">Modifier la SPA</button>
 				</div>
 				<div class="form-control mt-2">
 					<button @click="logout" class="btn btn-outline btn-primary w-full">Déconnexion</button>

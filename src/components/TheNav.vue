@@ -37,7 +37,7 @@ const hasSpa = localStorage.getItem("hasSpa") === "true";
 			<li>
 				<RouterLink class="lg:tooltip" data-tip="Profil" to="/account" v-slot="{ isActive }">
 					<span
-						:class="{ 'active-link': isActive || route.name === 'updateAccount' || route.name === 'history' }"
+						:class="{ 'active-link': isActive || route.name === 'updateAccount' || route.name === 'history' || route.name === 'editSpa' }"
 						class="material-symbols-outlined fill align-middle">account_circle</span>
 				</RouterLink>
 			</li>

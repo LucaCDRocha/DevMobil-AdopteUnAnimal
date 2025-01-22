@@ -10,6 +10,7 @@ import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
 import HistoryView from "../views/HistoryView.vue";
 import PetFormView from "../views/pets/PetFormView.vue";
 import SpaHomeView from "../views/spa/HomeView.vue";
+import EditSpaView from "@/views/auth/EditSpaView.vue";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,6 +84,12 @@ const router = createRouter({
 			path: "/pets/edit/:id",
 			name: "editPet",
 			component: PetFormView,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/spa/edit/:id",
+			name: "editSpa",
+			component: EditSpaView,
 			meta: { requiresAuth: true },
 		},
 	],
