@@ -12,6 +12,7 @@
 	const spaAddress = ref(""); // Propriété pour l'adresse de la SPA
 	const spaLatitude = ref(""); // Propriété pour la latitude de la SPA
 	const spaLongitude = ref(""); // Propriété pour la longitude de la SPA
+	const spaFullAddress = ref(""); // Propriété pour l'adresse complète de la SPA
 	const currentStep = ref(1);
 	const router = useRouter();
 
@@ -72,6 +73,7 @@
 			if (data && data.length > 0) {
 				spaLatitude.value = data[0].lat;
 				spaLongitude.value = data[0].lon;
+				spaFullAddress.value = data[0].display_name;
 			}
 		} catch (error) {
 			console.error("Error fetching coordinates:", error);
@@ -194,22 +196,8 @@
 								required
 								@input="handleAddressInput" />
 						</div>
-						<div class="form-control">
-							<label for="spaLatitude" class="label">
-								<span class="label-text">Latitude :</span>
-							</label>
-							<input type="text" id="spaLatitude" v-model="spaLatitude" class="input input-bordered" readonly />
-						</div>
-						<div class="form-control">
-							<label for="spaLongitude" class="label">
-								<span class="label-text">Longitude :</span>
-							</label>
-							<input
-								type="text"
-								id="spaLongitude"
-								v-model="spaLongitude"
-								class="input input-bordered"
-								readonly />
+						<div v-if="spaFullAddress" class="mt-2 text-sm text-gray-600">
+							<p><strong>Adresse complète:</strong> {{ spaFullAddress }}</p>
 						</div>
 					</div>
 					<div class="form-control mt-6 flex-row justify-between gap-2">
