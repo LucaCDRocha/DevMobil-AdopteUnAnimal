@@ -9,12 +9,12 @@
 	});
 
 	const isVisible = ref(true);
-	const emit = defineEmits(["swipe"]);
+	const emit = defineEmits(["swipe", "click"]);
 	const likeIndicator = ref(false);
 	const dislikeIndicator = ref(false);
 
-
 	const cardRef = ref(null);
+	let isDragging = false;
 
 	const onSwipe = (direction) => {
 		const target = cardRef.value;
@@ -24,6 +24,12 @@
 			isVisible.value = false;
 			emit("swipe", direction);
 		}, 500);
+	};
+
+	const onClick = (event) => {
+		if (!isDragging) {
+			emit("click", event);
+		}
 	};
 
 	onMounted(() => {
@@ -36,7 +42,11 @@
 					}),
 				],
 				listeners: {
+					start() {
+						isDragging = false;
+					},
 					move(event) {
+						isDragging = true;
 						const topCardIndex = 0;
 						if (props.index !== topCardIndex) return; // Ensure only the top card is swiped
 						const target = event.target;
@@ -78,7 +88,7 @@
 </script>
 
 <template>
-	<div v-if="isVisible" ref="cardRef" :class="`swipeable-card-${index} swipeable-card absolute w-full h-full opacity-0`">
+	<div v-if="isVisible" ref="cardRef" :class="`swipeable-card-${index} swipeable-card absolute w-full h-full opacity-0`" @click="onClick">
         <div class="absolute inset-0 flex justify-center items-center z-10 bg-error opacity-50 rounded-lg" v-if="dislikeIndicator">
             <span class="material-symbols-outlined fill align-middle indicator text-error-content text-9xl">close</span>
         </div>

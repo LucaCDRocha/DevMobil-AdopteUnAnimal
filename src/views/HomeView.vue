@@ -138,10 +138,10 @@
 		<ul
 			tabindex="0"
 			class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-1/2 transform -translate-x-1/2 gap-2">
-			<li v-for="tag in tags" :key="tag._id" >
+			<li v-for="tag in tags" :key="tag._id">
 				<div
 					@click="() => toggleTagSelection(tag)"
-					class="menu-item flex justify-between items-center btn "
+					class="menu-item flex justify-between items-center btn"
 					:class="{ 'btn-accent': selectedTags.includes(tag) }">
 					<span>{{ tag.nom }}</span>
 				</div>
