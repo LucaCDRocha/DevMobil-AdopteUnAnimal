@@ -75,8 +75,8 @@ const showModal = () => {
         <div class="mt-4">
           <p><strong>Age:</strong> {{ pet.age }} ans</p>
           <p><strong>SPA:</strong> {{ pet.spa_id.nom }}</p>
-          <p><strong>Likes:</strong> {{ pet.likes_count }}</p>
-          <p><strong>Dislikes:</strong> {{ pet.dislikes_count }}</p>
+          <p v-if="forSpa"><strong>Likes:</strong> {{ pet.likes_count }}</p>
+          <p v-if="forSpa"><strong>Dislikes:</strong> {{ pet.dislikes_count }}</p>
         </div>
       </div>
       <div  v-if="forSpa"> 
