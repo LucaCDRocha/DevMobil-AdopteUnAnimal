@@ -26,12 +26,11 @@
 		if (error) {
 			console.error("Error fetching SPA details");
 		} else {
-			console.log(data);
 			spaName.value = data.nom;
 			spaAddress.value = data.adresse;
 			spaLatitude.value = data.latitude;
 			spaLongitude.value = data.longitude;
-			spaFullAddress.value = data.fullAddress;
+			spaFullAddress.value = fetchCoordinates(data.adresse);
 		}
 	};
 

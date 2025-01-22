@@ -10,7 +10,7 @@ import UpdateAccountView from "../views/auth/UpdateAccountView.vue";
 import HistoryView from "../views/HistoryView.vue";
 import PetFormView from "../views/pets/PetFormView.vue";
 import SpaHomeView from "../views/spa/HomeView.vue";
-import EditSpaView from "@/views/auth/EditSpaView.vue";
+import EditSpaView from "@/views/spa/EditSpaView.vue";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
