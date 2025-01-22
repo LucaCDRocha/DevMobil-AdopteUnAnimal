@@ -7,10 +7,10 @@ Dans la section dédiée aux SPAs, il est possible de :
 - Créer, modifier et supprimer des fiches de SPAs.
 - Gérer les fiches des animaux (créer, modifier, supprimer).
 - Communiquer avec les utilisateurs intéressés par l'adoption.
-- Gérer les statuts des demandes d'adoption (en attente, refusée, indisponible, acceptée). Si une adoption est acceptée pour un animal, toutes les autres demandes pour ce même animal sont automatiquement marquées comme "indisponible". Une fois l'animal adopté, il n'est plus visible par les utilisateurs.
+- Gérer les statuts des demandes d'adoption (en attente, refusée, indisponible, acceptée). Si une adoption est acceptée pour un animal, toutes les autres demandes pour ce même animal sont automatiquement marquées comme "indisponible". Une fois l'animal adopté, il n'est plus visible par les clients.
 
 ### Espace Client
-Dans la section client, les utilisateurs peuvent :
+Dans la section client, les clients peuvent :
 - Créer, modifier ou supprimer leur compte.
 - Aimer des animaux, avec un classement basé sur la localisation du client et de l'animal.
 - Communiquer avec la SPA lorsqu'un animal est ajouté aux favoris.
@@ -20,9 +20,17 @@ Dans la section client, les utilisateurs peuvent :
 
 ## Installation
 Afin d'installer le code de l'application et pour le faire fonctionner en local, il faut : 
-- **pull** de repository
-- renomer le fichier **.env-example** en **.env**
-- faire un **npm i**
-- faire **npm run dev**
-
->Installer le back-end de l'application sur ce lien : [ici](https://github.com/LucaCDRocha/ArchiOWeb-AdopteUnAnimal)
+- Cloner le repository
+```bash
+git clone https://github.com/LucaCDRocha/DevMobil-AdopteUnAnimal.git
+```
+- Renomer le fichier **.env-example** en **.env**
+- Installer les dépendances
+```bash
+npm install
+```
+- Pour démarrer l'application en mode développement 
+```bash
+npm run dev
+```
+- Installer le back-end de l'application sur ce lien : [ici](https://github.com/LucaCDRocha/ArchiOWeb-AdopteUnAnimal)
