@@ -20,16 +20,16 @@ Dans la section client, les clients peuvent :
 
 ## Installation
 Afin d'installer le code de l'application et pour le faire fonctionner en local, il faut : 
-- **clone** le repository
+- Cloner le repository
 ```bash
 git clone https://github.com/LucaCDRocha/DevMobil-AdopteUnAnimal.git
 ```
-- renomer le fichier **.env-example** en **.env**
-- faire un **npm i**
+- Renomer le fichier **.env-example** en **.env**
+- Installer les dépendances
 ```bash
-npm i
+npm install
 ```
-- faire **npm run dev**
+- Pour démarrer l'application en mode développement 
 ```bash
 npm run dev
 ```
