@@ -1,25 +1,27 @@
 # DevMobil-AdopteUnAnimal
 ## Description
-DevMobil-AdopteUnAnimal est une PWA qui permet aux SPAs de mettre leurs animaux à adopter. Il y a donc un espace pour les SPAs et un pour les personnes qui souhaitent adopter un animal.
-### SPA
-Dans la partie des SPAs, il est possible de 
-- Créer/modifier/supprimer une SPA
-- créer/modifer/supprimer des animaux
-- Discuter avec les clients qui souhaitent adopter animal.
-- Mettre une adoption comme : en attente, refusée, indisponible et acceptée. Si plusieurs personnes sont intéressées par le même animal, et qu'une personne est acceptée, les autres sont automatiquement mis en indisponible. Une fois qu'un animal est adopté, il n'est plus visible par les clients.
-### Client
-Dans la partie des clients, il est possble de 
-- Créer/modifier/supprimer un compte
-- Aimer des animaux. Les animaux sont classés en fonction de la localisation du client et de l'animal.
-- Communiquer avec la spa de l'animal si animal est aimé
-- Voir si la demande d'adoption est en attente, refusée, acceptée ou indisponible.
-- De disliker un animal
-- De voir l'historique des likes et dislikes et de supprimer l'historique. Si un animal est supprimé de l'historique, l'animal va réapparaitre dans la liste des animaux que le client peux adopter.
+DevMobil-AdopteUnAnimal est une application web progressive (PWA) conçue pour aider les refuges pour animaux (SPAs) à proposer leurs animaux à l'adoption. L'application comporte deux sections : une pour les SPAs et une autre pour les utilisateurs cherchant à adopter un animal.
+
+### Espace SPA
+Dans la section dédiée aux SPAs, il est possible de :
+- Créer, modifier et supprimer des fiches de SPAs.
+- Gérer les fiches des animaux (créer, modifier, supprimer).
+- Communiquer avec les utilisateurs intéressés par l'adoption.
+- Gérer les statuts des demandes d'adoption (en attente, refusée, indisponible, acceptée). Si une adoption est acceptée pour un animal, toutes les autres demandes pour ce même animal sont automatiquement marquées comme "indisponible". Une fois l'animal adopté, il n'est plus visible par les utilisateurs.
+
+### Espace Client
+Dans la section client, les utilisateurs peuvent :
+- Créer, modifier ou supprimer leur compte.
+- Aimer des animaux, avec un classement basé sur la localisation du client et de l'animal.
+- Communiquer avec la SPA lorsqu'un animal est ajouté aux favoris.
+- Suivre l'état de leur demande d'adoption (en attente, refusée, acceptée ou indisponible).
+- Retirer un animal de leurs favoris (disliker).
+- Consulter l'historique de leurs interactions (likes et dislikes) et le supprimer. Si un animal est retiré de l'historique, il réapparaît dans la liste des animaux disponibles à l'adoption.
 
 ## Installation
 Afin d'installer le code de l'application et pour le faire fonctionner en local, il faut : 
 - **pull** de repository
-- modifier le fichier **.env-example** en **.env**
+- renomer le fichier **.env-example** en **.env**
 - faire un **npm i**
 - faire **npm run dev**
 
