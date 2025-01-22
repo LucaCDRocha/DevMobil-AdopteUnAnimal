@@ -17,8 +17,6 @@
 	// id de l'adoption
 	id.value = route.params.id;
 
-	console.log(id.value);
-
 	const spaCrud = useFetchApiCrud("spas");
 
 	const fetchSpaDetails = async () => {
