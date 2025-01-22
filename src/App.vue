@@ -10,7 +10,7 @@
 		<RouterView />
 	</main>
 
-	<TheNav v-if="route.name !== 'login' && route.name !== 'register'" />
+	<TheNav v-if="route.name !== 'login' && route.name !== 'register'"  class="z-50"/>
 </template>
 
 <style scoped></style>
