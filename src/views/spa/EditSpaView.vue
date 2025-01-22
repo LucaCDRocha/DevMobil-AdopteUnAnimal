@@ -80,6 +80,10 @@
 		}, 1000); // Adjust the debounce delay as needed
 	};
 
+	const goToAccount = () => {
+		router.push({ name: "account" });
+	};
+
 	onMounted(() => {
 		fetchSpaDetails();
 		const addressInput = document.getElementById("spaAddress");
@@ -118,6 +122,9 @@
 					</div>
 					<div class="form-control mt-6">
 						<button type="submit" class="btn btn-primary btn-wide">Mettre à jour</button>
+					</div>
+					<div class="form-control mt-2">
+						<button type="button" class="btn btn-primary btn-outline btn-wide" @click="goToAccount">Retour au compte</button>
 					</div>
 				</form>
 			</div>
