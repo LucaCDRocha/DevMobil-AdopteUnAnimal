@@ -19,6 +19,8 @@
 
 	const hasSpa = localStorage.getItem("hasSpa") === "true";
 
+	const isFetching = ref(true);
+
 	const fetchUserInfo = async () => {
 		const { data, error } = await userCrud.read(userId, getAuthHeaders());
 
@@ -38,6 +40,7 @@
 		} else {
 			userInfo.value = data;
 		}
+		isFetching.value = false;
 	};
 
 	onMounted(() => {
@@ -109,18 +112,18 @@
 					<p><strong>Email :</strong> {{ userInfo.email }}</p>
 				</div>
 				<div class="form-control mt-6">
-					<button @click="goToUpdateAccount" class="btn btn-primary w-full">Modifier le compte</button>
+					<button @click="goToUpdateAccount" class="btn btn-primary w-full" :disabled="isFetching">Modifier le compte</button>
 				</div>
 				<div class="form-control mt-2" v-if="!hasSpa">
-					<button @click="goToHistory" class="btn btn-outline btn-primary w-full">
+					<button @click="goToHistory" class="btn btn-outline btn-primary w-full" :disabled="isFetching">
 						Historique des likes et dislikes
 					</button>
 				</div>
 				<div class="form-control mt-2" v-if="hasSpa">
-					<button @click="goToEditSpa" class="btn btn-outline btn-primary w-full">Modifier la SPA</button>
+					<button @click="goToEditSpa" class="btn btn-outline btn-primary w-full" :disabled="isFetching">Modifier la SPA</button>
 				</div>
 				<div class="form-control mt-2">
-					<button @click="logout" class="btn btn-outline btn-primary w-full">Déconnexion</button>
+					<button @click="logout" class="btn btn-outline btn-primary w-full" :disabled="isFetching">Déconnexion</button>
 				</div>
 				<div class="form-control mt-2">
 					<button @click="openModalDelete" class="btn btn-link text-error w-full">Supprimer le compte</button>

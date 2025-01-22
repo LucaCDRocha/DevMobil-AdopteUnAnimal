@@ -19,7 +19,10 @@
 
 	const spaCrud = useFetchApiCrud("spas");
 
+	const isFetching = ref(true);
+
 	const fetchSpaDetails = async () => {
+		isFetching.value = true;
 		const { data, error } = await spaCrud.read(id.value, getAuthHeaders());
 		if (error) {
 			console.error("Error fetching SPA details");
@@ -30,6 +33,7 @@
 			spaLongitude.value = data.longitude;
 			spaFullAddress.value = fetchCoordinates(data.adresse);
 		}
+		isFetching.value = false;
 	};
 
 	const updateSpa = async () => {
@@ -54,6 +58,7 @@
 
 	const fetchCoordinates = async (address) => {
 		try {
+			isFetching.value = true;
 			const response = await fetch(
 				`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`
 			);
@@ -65,6 +70,8 @@
 			}
 		} catch (error) {
 			console.error("Error fetching coordinates:", error);
+		} finally {
+			isFetching.value = false;
 		}
 	};
 
@@ -121,7 +128,7 @@
 						<p><strong>Adresse complète:</strong> {{ spaFullAddress }}</p>
 					</div>
 					<div class="form-control mt-6">
-						<button type="submit" class="btn btn-primary btn-wide">Mettre à jour</button>
+						<button type="submit" class="btn btn-primary btn-wide" :disabled="isFetching">Mettre à jour</button>
 					</div>
 					<div class="form-control mt-2">
 						<button type="button" class="btn btn-primary btn-outline btn-wide" @click="goToAccount">Retour au compte</button>
