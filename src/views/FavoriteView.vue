@@ -23,21 +23,31 @@ const currentPage = ref(1);
 const totalPages = ref(1);
 const totalLikes = ref(0);
 const pageSize = 4;
+const isLoadingMore = ref(false);
 
-const fetchPets = async (page = 1) => {
+const fetchPets = async (page = 1, append = false) => {
 	const { data, error, resHeaders } = await petCrudFavorite.readAll(getAuthHeaders(), { page, pageSize });
 	if (!error) {
-		cards.value = data;
-		cards.value.reverse();
+		if (append) {
+			data.forEach((pet) => {
+				if (!cards.value.some((card) => card._id === pet._id)) {
+					cards.value.push(pet);
+				}
+			});
+		} else {
+			cards.value = data;
+		}
 		totalLikes.value = parseInt(resHeaders["pagination-total-likes"]);
 		totalPages.value = parseInt(resHeaders["pagination-total-pages"]);
 	}
+	isLoadingMore.value = false;
 };
 
-const changePage = (page) => {
-	if (page > 0 && page <= totalPages.value) {
-		currentPage.value = page;
-		fetchPets(page);
+const loadMorePets = async () => {
+	if (currentPage.value < totalPages.value) {
+		isLoadingMore.value = true;
+		currentPage.value += 1;
+		await fetchPets(currentPage.value, true);
 	}
 };
 
@@ -55,14 +65,16 @@ const closePetDetails = () => {
 
 const deleteLike = async () => {
 	showVerifMessage.value = false;
-	cards.value = cards.value.filter((c) => c._id !== showVerifMessagePet.value._id);
-	await petCrud.del(`${showVerifMessagePet.value._id}/like`, getAuthHeaders());
+	const petId = showVerifMessagePet.value._id;
+	cards.value = cards.value.filter((c) => c._id !== petId);
+	await petCrud.del(`${petId}/like`, getAuthHeaders());
 	totalLikes.value -= 1;
 	totalPages.value = Math.ceil(totalLikes.value / pageSize);
 	if (cards.value.length === 0 && currentPage.value > 1) {
-		changePage(currentPage.value - 1);
+		currentPage.value -= 1;
+		await fetchPets(currentPage.value, false);
 	} else {
-		fetchPets(currentPage.value);
+		await fetchPets(currentPage.value, true);
 	}
 };
 
@@ -86,7 +98,7 @@ const closeModal = () => {
 </script>
 
 <template>
-	<div v-if="isLoading" class="flex justify-center items-center h-full w-full">
+	<div v-if="isLoading && currentPage === 1" class="flex justify-center items-center h-full w-full">
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col w-full items-center h-full overflow-scroll p-4">
@@ -98,11 +110,11 @@ const closeModal = () => {
 				@clickFirstButton="showModal(card)" @click="(event) => openPetDetails(card, event)"
 				@clickChatButton="createAdoption(card)" />
 		</div>
-		<div v-if="totalPages > 1" class="flex justify-between items-center mt-4 absolute bottom-24">
-			<button @click="changePage(currentPage - 1,)" :disabled="currentPage === 1" class="btn">Précédent</button>
-			<span class="m-4">Page {{ currentPage }} sur {{ totalPages }}</span>
-			<button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages"
-				class="btn">Suivant</button>
+		<div v-if="currentPage < totalPages || isLoadingMore" class="flex justify-center items-center mt-4">
+			<button @click="loadMorePets" class="btn" :disabled="isLoadingMore">
+				<span v-if="isLoadingMore" class="loading loading-spinner"></span>
+				<span v-else>Charger plus</span>
+			</button>
 		</div>
 	</div>
 
