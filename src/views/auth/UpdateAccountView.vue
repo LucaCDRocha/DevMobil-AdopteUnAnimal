@@ -13,6 +13,7 @@
 	const password = ref("");
 	const showModalSuccess = ref(false);
 	const showModalFailure = ref(false);
+	const isFetching = ref(true);
 
 	const userCrud = useFetchApiCrud('users');
 
@@ -29,6 +30,7 @@
 			lastName.value = data.lastName;
 			email.value = data.email;
 		}
+		isFetching.value = false;
 	};
 
 	onMounted(() => {
@@ -94,7 +96,7 @@
 						</label>
 						<input id="password" v-model="password" type="password" class="input input-bordered w-full" />
 					</div>
-					<button type="submit" class="btn btn-primary w-full">Modifier le compte</button>
+					<button type="submit" class="btn btn-primary w-full" :disabled="isFetching">Modifier le compte</button>
 				</form>
 				<div class="form-control mt-2">
 					<button @click="goToAccount" class="btn btn-outline btn-primary w-full">Retour au compte</button>

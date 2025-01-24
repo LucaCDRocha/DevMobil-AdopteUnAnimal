@@ -22,7 +22,6 @@
 	const socket = new WebSocket(import.meta.env.VITE_WS_URL);
 
 	socket.onopen = () => {
-		console.log("Connected to WebSocket server");
 		socket.send(
 			JSON.stringify({ type: "authenticate", userId, adoptionId: id.value, token: localStorage.getItem("token") })
 		);
@@ -81,7 +80,6 @@
 		});
 		if (!error) {
 			chat.value = data;
-			console.log("chat", chat.value);
 			chat.value.groupedMessages = groupMessagesByDate(chat.value.messages);
 		}
 	};

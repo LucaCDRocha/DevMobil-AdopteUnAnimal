@@ -10,8 +10,6 @@
 		forSpa: Boolean,
 	});
 
-	console.log(props.card.status);
-
 	const imageSrc = computed(() => transformImageData(props.card.pet_id.images[0]));
 </script>
 

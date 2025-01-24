@@ -3,7 +3,7 @@ import router from "@/router";
 
 export function useFetchApiCrud(resource) {
 	const apiUrl = `${import.meta.env.VITE_API_URL}/${resource}`;
-	const isLoading = ref(false);
+	const isLoading = ref(true);
 
 	const handleUnauthorized = (response) => {
 		if (response.status === 401) {
@@ -13,7 +13,6 @@ export function useFetchApiCrud(resource) {
 	};
 
 	const readAll = async (headers, queryParams = {}) => {
-		isLoading.value = true;
 		try {
 			const queryString = new URLSearchParams(queryParams).toString();
 			const url = queryString ? `${apiUrl}?${queryString}` : apiUrl;
@@ -54,6 +53,8 @@ export function useFetchApiCrud(resource) {
 			return { data, error: !response.ok };
 		} catch (error) {
 			return { data: null, error: true };
+		} finally {
+			isLoading.value = false;
 		}
 	};
 
@@ -158,6 +159,8 @@ export function useFetchApiCrud(resource) {
 			return { data: await response.json(), error: !response.ok };
 		} catch (error) {
 			return { data: null, error: true };
+		} finally {
+			isLoading.value = false;
 		}
 	};
 
