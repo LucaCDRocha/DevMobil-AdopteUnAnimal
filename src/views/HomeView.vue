@@ -48,7 +48,11 @@
 	fetchPets();
 	fetchTags();
 
+	const isSwiping = ref(false);
+
 	const handleSwipe = async (direction, cardId = null) => {
+		if (isSwiping.value) return;
+		isSwiping.value = true;
 		const currentCardIndex = 0;
 		const currentCard = document.querySelector(`.swipeable-card-${currentCardIndex}`);
 		const nextCard = document.querySelector(`.swipeable-card-${currentCardIndex + 1}`);
@@ -64,6 +68,7 @@
 					nextCard.style.transition = "";
 				}
 				cards.value.splice(currentCardIndex, 1);
+				isSwiping.value = false;
 			}, 500);
 
 			if (cardId) {
@@ -119,10 +124,10 @@
 				@click="(event) => openPetDetails(card, event)" />
 		</div>
 		<div v-if="cards.length > 0" class="flex justify-between mt-1 w-72 z-50">
-			<button @click="() => handleSwipe('left', cards[0]._id)" class="btn btn-lg btn-error btn-circle">
+			<button @click="() => handleSwipe('left', cards[0]._id)" class="btn btn-lg btn-error btn-circle" :disabled="isSwiping">
 				<span class="material-symbols-outlined fill align-middle text-3xl">close</span>
 			</button>
-			<button @click="() => handleSwipe('right', cards[0]._id)" class="btn btn-lg btn-success btn-circle">
+			<button @click="() => handleSwipe('right', cards[0]._id)" class="btn btn-lg btn-success btn-circle" :disabled="isSwiping">
 				<span class="material-symbols-outlined fill align-middle text-3xl">favorite</span>
 			</button>
 		</div>
