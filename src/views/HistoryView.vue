@@ -11,7 +11,7 @@
 	const petCrudLikes = useFetchApiCrud(`users/${userId}/likes`);
 	const petCrudDislikes = useFetchApiCrud(`users/${userId}/dislikes`);
 	const petCrud = useFetchApiCrud("pets");
-	const isLoading = ref(false);
+	const isLoading = ref(true);
 	const isLoadingMoreLikes = ref(false);
 	const isLoadingMoreDislikes = ref(false);
 	const showVerifMessage = ref(false);
@@ -123,7 +123,7 @@
 
 <template>
 	<div
-		v-if="isLoading && currentPageLikes === 1 && currentPageDislikes === 1"
+		v-if="isLoading"
 		class="flex justify-center items-center h-full w-full">
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>

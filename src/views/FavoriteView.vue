@@ -66,7 +66,7 @@
 		await petCrud.del(`${petId}/like`, getAuthHeaders());
 		totalLikes.value -= 1;
 		totalPages.value = Math.ceil(totalLikes.value / pageSize);
-		await fetchPets(currentPage.value);
+		await fetchPets(currentPage.value, false);
 	};
 
 	const createAdoption = async (pet) => {
@@ -88,7 +88,7 @@
 </script>
 
 <template>
-	<div v-if="isLoading && currentPage === 1" class="flex justify-center items-center h-full w-full">
+	<div v-if="isLoading" class="flex justify-center items-center h-full w-full">
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 	<div v-else class="flex flex-col w-full items-center h-full overflow-scroll p-4">
