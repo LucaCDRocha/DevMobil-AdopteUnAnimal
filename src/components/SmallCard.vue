@@ -32,7 +32,7 @@ const imageSrc = computed(() => transformImageData(props.card.images[0]));
 			<span class="material-symbols-outlined fill align-middle">{{ forSpa ? "edit" : "heart_broken" }}</span>
 		</div>
 		<div class="btn btn-success self-center mr-5" @click="handleChatButton">
-			<span class="material-symbols-outlined fill align-middle">{{ card.adoptionId ? 'chat' : 'add_comment' }}</span>
+			<span class="material-symbols-outlined fill align-middle">{{ card.adoptionId || forSpa ? 'chat' : 'add_comment' }}</span>
 		</div>
 	</div>
 </template>
