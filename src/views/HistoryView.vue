@@ -132,13 +132,19 @@
 		<div class="flex flex-col md:w-1/2 w-full gap-4">
 			<div class="collapse collapse-arrow pb-5 transition-all duration-700 ease-in-out">
 				<input type="checkbox" />
-				<div
+				<!-- A remettre quand le back accepte les bons headers -->
+				<!-- <div
 					class="collapse-title text-xl font-medium bg-success text-success-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
 					Vous aimez {{ totalLikes }} {{ totalLikes > 1 || totalLikes === 0 ? " animaux" : " animal" }}
+				</div> -->
+				<div
+					class="collapse-title text-xl font-medium bg-success text-success-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
+					Les animaux que vous aimés
 				</div>
+
 				<div class="collapse-content flex flex-col w-full gap-4 transition-all duration-700 ease-in-out">
 					<p v-if="likes.length === 0">
-						Vous aimez {{ totalLikes }} {{ totalLikes > 1 || totalLikes === 0 ? " animaux" : " animal" }}
+						Vous aimez 0 animaux
 					</p>
 
 					<HistoryCard
@@ -159,16 +165,20 @@
 			</div>
 			<div class="collapse collapse-arrow pb-5 transition-all duration-700 ease-in-out">
 				<input type="checkbox" />
-				<div
+				<!-- A remettre quand le back accepte les bons headers -->
+				<!-- <div
 					class="collapse-title text-xl font-medium bg-error text-error-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
 					Vous n'avez pas aimé {{ totalDislikes }}
 					{{ totalDislikes > 1 || totalDislikes === 0 ? " animaux" : " animal" }}
+				</div> -->
+				<div
+					class="collapse-title text-xl font-medium bg-error text-error-content rounded-b-2xl mb-4 transition-all duration-700 ease-in-out delay-150">
+					Les animaux que vous n'aimez pas
 				</div>
 
 				<div class="collapse-content flex flex-col w-full gap-4 transition-all duration-700 ease-in-out">
 					<p v-if="dislikes.length === 0">
-						Vous n'avez pas aimé {{ totalDislikes }}
-						{{ totalDislikes > 1 || totalDislikes === 0 ? " animaux" : " animal" }}
+						Vous n'avez pas aimé 0 animaux
 					</p>
 					<HistoryCard
 						v-for="(card, index) in dislikes"
