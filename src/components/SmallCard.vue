@@ -25,7 +25,7 @@ const imageSrc = computed(() => transformImageData(props.card.images[0]));
 			<img :src="imageSrc" alt="Card image" class="w-28 h-28 object-cover" />
 		</figure>
 		<div class="card-body p-3">
-			<h2 class="card-title text-lg font-bold">{{ card.nom }}</h2>
+			<h2 class="card-title text-lg font-bold">{{ card.nom }}<span v-if="card.isAdopted" class="text-success text-sm">Adopté</span></h2>
 			<p class="text-sm">{{ card.spa_id.nom }}</p>
 		</div>
 		<div class="btn btn-error self-center mr-5" @click="handleClickFirstButton">
