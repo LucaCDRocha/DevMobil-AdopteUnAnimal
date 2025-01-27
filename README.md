@@ -1,7 +1,7 @@
 # DevMobil-AdopteUnAnimal
 ## Description
 DevMobil-AdopteUnAnimal est une application conçue pour aider les refuges pour animaux (SPAs) à proposer leurs animaux à l'adoption. L'application comporte deux sections : une pour les SPAs et une autre pour les utilisateurs cherchant à adopter un animal. 
-L'application est disponible en ligne, [ici](http://devmobil-adopteunanimal.onrender.com/)
+L'application est disponible en ligne, [ici](http://devmobil-adopteunanimal.onrender.com/).
 
 ### Espace SPA
 Dans la section dédiée aux SPAs, il est possible de :
